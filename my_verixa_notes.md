@@ -90,3 +90,24 @@ When I run `/opsx:propose`, OpenSpec creates a folder: `openspec/changes/<featur
 - In larger teams or microservice architectures, features span across multiple repositories (e.g., frontend, backend, shared types).
 - OpenSpec has a feature called **Stores**: a dedicated Git repo containing specs and changes.
 - Multiple code repositories connect to this single store, so product managers, designers, and engineers share a single source of truth!
+
+---
+
+## 📝 Note 6: Hands-On Case Study — Building the DBZ Game
+
+### What I Did and Learned:
+1. **GitHub Setup & Sync:**
+   - Linked my local folder to my GitHub repo: `https://github.com/SubodhMuneshwar/OpenSpecs_test.git`.
+2. **Command 1 - Explore:**
+   - Decided to build a Dragon Ball Z browser battle mini-game (Goku vs. Vegeta).
+   - Agreed on mechanics (Punch, Ki Charge, Kamehameha, Guard, and CPU AI) without writing code upfront.
+3. **Command 2 - Propose (`/opsx:propose dbz-battle-game`):**
+   - Generated `proposal.md`, `specs/battle-arena/spec.md`, `design.md`, and `tasks.md`.
+   - Verified that the change was 100% valid before generating any code.
+   - Committed the proposal to GitHub as the "Source of Truth".
+4. **Command 3 - Apply (`/opsx:apply`):**
+   - Translated the spec into `index.html` with full Web Audio sound effects, Super Saiyan golden aura, and battle logic.
+   - Checked off all tasks in `tasks.md` and pushed code to GitHub.
+5. **Command 4 - Archive (`/opsx:archive`):**
+   - Merged the delta spec into permanent living specs (`openspec/specs/`) and moved completed change to archive.
+
