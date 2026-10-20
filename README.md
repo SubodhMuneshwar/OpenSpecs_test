@@ -66,9 +66,13 @@ Clarify doubts         Generate 4 MD files    Approve architecture  Implement co
 
 ```text
 SPECS/
-├── index.html                                        # The complete playable DBZ game
+├── index.html                                        # The complete playable Dragon Ball Z BT3 3D game
 ├── README.md                                         # This documentation guide
 ├── my_verixa_notes.md                                # Copy-ready personal learning notes for Verixa
+├── assets/                                           # 3D anime models and game textures
+│   ├── goku_3d.jpg                                   # Super Saiyan Goku 3D character render
+│   ├── vegeta_3d.jpg                                 # Vegeta Royal Saiyan 3D character render
+│   └── battlefield.jpg                               # Namek / Wasteland battlefield skybox
 ├── notes_assets/                                     # High-resolution architectural diagrams
 │   ├── 1_openspec_workflow.jpg                       # 5-Phase lifecycle diagram
 │   ├── 2_vibe_vs_specs.jpg                           # Vibe Coding vs. SDD comparison
@@ -77,11 +81,31 @@ SPECS/
     ├── config.yaml                                   # OpenSpec configuration profile
     ├── specs/                                        # Permanent Living Specifications (Source of Truth)
     │   └── battle-arena/
-    │       └── spec.md                               # Living battle-arena spec (7 testable requirements)
+    │       └── spec.md                               # Living battle-arena spec (19 testable requirements!)
     └── changes/                                      # Change proposals
         └── archive/                                  # Audit trail of completed changes
-            └── 2026-10-19-dbz-battle-game/           # Archived proposal, design, specs, & tasks
+            ├── 2026-10-19-dbz-battle-game/           # Change 1: 2D turn-based arena (7 reqs)
+            ├── 2026-10-20-enhance-game-frontend/     # Change 2: Scouter HUD & anime art (11 reqs)
+            ├── 2026-10-20-3d-battle-arena/           # Change 3: Three.js 3D spatial flight (15 reqs)
+            └── 2026-10-20-budokai-tenkaichi-3-mode/  # Change 4: Budokai Tenkaichi 3 HUD & combat (19 reqs)
 ```
+
+---
+
+## 🎮 Budokai Tenkaichi 3 Controls
+
+| Command | Key / Action | In-Game Effect |
+| :--- | :--- | :--- |
+| **3D Strafe & Move** | `W`, `A`, `S`, `D` | Move along X/Z plane in 3D canyon arena |
+| **Dragon Dash** | `Shift + WASD` | Supersonic flight burst with conical shockwave aura |
+| **Vertical Flight** | `Space` / `C` | Ascend / Descend elevation in 3D air space |
+| **Z-Vanish Teleport** | `V` | Instant transmission directly behind opponent's back |
+| **Rush Melee Combo** | `J` / Left-Click | 4-Hit strike chain ending in explosive knockback kick |
+| **Ki Energy Blast** | `K` / Right-Click | Rapid 3D homing energy orbs with impact sparks |
+| **Power Charge** | `E` (Hold) | Surge Ki aura; unlocks **Sparking! Mode** at max Ki |
+| **Kamehameha** | `Q` | Massive 3D energy beam dealing 40 damage |
+| **Defensive Guard** | `F` | Saiyan energy barrier absorbing 75% incoming damage |
+| **Explosive Wave** | `B` | 360-degree shockwave blast repelling nearby attacks |
 
 ---
 
@@ -121,6 +145,8 @@ All conceptual learnings and hands-on milestones are formatted for easy copy-pas
 - **Note 4:** Command Cheat Sheet (CLI vs. Chat Slash Commands)
 - **Note 5:** Scaling Across Teams with OpenSpec Stores
 - **Note 6:** Real-World Hands-On Case Study: Building the DBZ Game
+- **Note 7:** The 3D Spatial Evolution — Full Real-Time Movement
+- **Note 8:** The Dragon Ball Z: Budokai Tenkaichi 3 (BT3) Transformation
 
 ---
 
@@ -128,3 +154,4 @@ All conceptual learnings and hands-on milestones are formatted for easy copy-pas
 - **GitHub Repository:** [https://github.com/SubodhMuneshwar/OpenSpecs_test.git](https://github.com/SubodhMuneshwar/OpenSpecs_test.git)
 - **Official OpenSpec Repo:** [https://github.com/Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec)
 - **OpenSpec Docs:** [https://openspec.dev](https://openspec.dev)
+

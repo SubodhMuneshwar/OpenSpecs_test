@@ -129,4 +129,26 @@ When I run `/opsx:propose`, OpenSpec creates a folder: `openspec/changes/<featur
 - **Dynamic Lock-On Camera:** Third-person chase camera that dynamically follows Goku and keeps Vegeta locked in frame.
 - **OpenSpec Brownfield Scaling:** Added this 3D feature through change `3d-battle-arena`. The living spec (`battle-arena`) expanded from 11 to **15 testable requirements**!
 
+---
+
+## 📝 Note 8: The Dragon Ball Z: Budokai Tenkaichi 3 (BT3) Transformation
+
+### What I Learned & Implemented:
+- **Authentic BT3 HUD Architecture:**
+  - Layered multi-bar health system (`x3 LIFE` green-yellow-red progression) with classic slanted fighter portraits and dynamic character frames.
+  - 5-segmented blue Ki block gauges matching BT3 PS2 style.
+  - Blast Stock counters for tactical super abilities.
+  - Dynamic 3D lock-on telemetry crosshair displaying real-time target distance in meters (`24m`, `42m`).
+  - Comic-style Hit & Damage Combo Counter (`4 HITS! 1,200 DMG`) that appears during rush combos and fades out.
+- **Iconic BT3 Combat Mechanics:**
+  - **Dragon Dash (`Shift + WASD`):** High-speed supersonic flight propulsion surrounded by conical aura shockwaves and Ki depletion.
+  - **Z-Vanish Teleport (`V` key):** Instant transmission behind the enemy's back with authentic "bwa-shing" audio synthesis.
+  - **4-Hit Rush Combo (`J` key):** Rapid melee sequence culminating in an explosive knockback strike that sends the opponent hurtling across the 3D battlefield.
+  - **Sparking! Mode (`E` key at max Ki):** Overloaded golden flaming aura, unlimited blast speed, and super armor.
+  - **Explosive Wave (`B` key):** 360-degree radial defensive shockwave blast pushing back nearby threats.
+- **OpenSpec Progression:**
+  - Executed change `budokai-tenkaichi-3-mode` following Anand Subramani's workflow.
+  - The living specification (`openspec/specs/battle-arena/spec.md`) has grown organically from 7 to 11 to 15, and now **19 fully validated requirements**, proving how OpenSpec accommodates rapid feature iteration without code rot!
+
+
 
