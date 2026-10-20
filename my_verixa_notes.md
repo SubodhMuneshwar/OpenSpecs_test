@@ -111,3 +111,22 @@ When I run `/opsx:propose`, OpenSpec creates a folder: `openspec/changes/<featur
 5. **Command 4 - Archive (`/opsx:archive`):**
    - Merged the delta spec into permanent living specs (`openspec/specs/`) and moved completed change to archive.
 
+---
+
+## 📝 Note 7: The 3D Spatial Evolution — Full Real-Time Movement
+
+### What I Learned & Implemented:
+- **From 2D to 3D Space:** Evolved the game from turn-based cards to a full 3D real-time spatial battle arena using **Three.js**.
+- **Six-Axis 3D Controls:**
+  - `W`, `A`, `S`, `D`: 3D ground strafe and forward/backward movement.
+  - `Space`: Fly upwards into the sky.
+  - `Shift`: Descend toward the ground.
+  - `J` / Left-Click: Dragon Rush melee strike.
+  - `K` / Right-Click: 3D Ki blast projectiles.
+  - `E` (Hold): Charge Ki aura in mid-air.
+  - `Q`: Fire full 3D Kamehameha energy beam.
+  - `F`: Instant Guard forcefield.
+- **Dynamic Lock-On Camera:** Third-person chase camera that dynamically follows Goku and keeps Vegeta locked in frame.
+- **OpenSpec Brownfield Scaling:** Added this 3D feature through change `3d-battle-arena`. The living spec (`battle-arena`) expanded from 11 to **15 testable requirements**!
+
+
