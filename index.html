@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon Ball Z: 3D Ki Clash Arena · Full Spatial Combat</title>
+  <title>Dragon Ball Z: 3D Ki Clash Arena · Realistic Saiyan Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
     }
 
     body {
-      background-color: #05070c;
+      background-color: #030408;
       color: #ffffff;
       font-family: 'Rajdhani', sans-serif;
       width: 100vw;
@@ -59,7 +59,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px 24px;
+      padding: 16px 22px;
     }
 
     /* Top Bar HUD */
@@ -71,11 +71,11 @@
     }
 
     .brand-box {
-      background: rgba(10, 14, 26, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(10, 14, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 14px;
       padding: 8px 16px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
 
@@ -85,7 +85,7 @@
       background: linear-gradient(180deg, #fff200 0%, #ff5500 70%, #cc0000 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 14px rgba(255, 85, 0, 0.7));
+      filter: drop-shadow(0 0 14px rgba(255, 85, 0, 0.8));
       line-height: 1.1;
     }
 
@@ -102,30 +102,30 @@
       display: flex;
       gap: 20px;
       flex: 1;
-      max-width: 650px;
+      max-width: 680px;
     }
 
     .status-panel {
       flex: 1;
-      background: rgba(12, 17, 30, 0.8);
-      border: 2px solid rgba(255, 255, 255, 0.12);
+      background: rgba(12, 17, 30, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.15);
       border-radius: 14px;
       padding: 10px 14px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       display: flex;
       flex-direction: column;
       gap: 6px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
     }
 
     .status-panel.goku {
-      border-color: rgba(255, 120, 0, 0.5);
-      box-shadow: 0 0 20px rgba(255, 85, 0, 0.25);
+      border-color: rgba(255, 120, 0, 0.6);
+      box-shadow: 0 0 25px rgba(255, 85, 0, 0.3);
     }
 
     .status-panel.vegeta {
-      border-color: rgba(99, 102, 241, 0.5);
-      box-shadow: 0 0 20px rgba(79, 70, 229, 0.25);
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 0 25px rgba(79, 70, 229, 0.3);
     }
 
     .name-row {
@@ -144,8 +144,8 @@
     .power-level {
       font-size: 11px;
       color: #34d399;
-      background: rgba(6, 78, 59, 0.6);
-      padding: 2px 6px;
+      background: rgba(6, 78, 59, 0.7);
+      padding: 2px 7px;
       border-radius: 4px;
       border: 1px solid #10b981;
     }
@@ -153,7 +153,7 @@
     .bar-wrap {
       width: 100%;
       height: 14px;
-      background: #090d16;
+      background: #080c14;
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -169,23 +169,23 @@
 
     .hp-fill {
       background: linear-gradient(90deg, #059669, #10b981, #34d399);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.7);
     }
 
     .ki-fill {
       background: linear-gradient(90deg, #0284c7, #06b6d4, #67e8f9);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.7);
       width: 0%;
     }
 
     .vegeta .ki-fill {
       background: linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.7);
     }
 
     .audio-btn {
       pointer-events: auto;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(255, 215, 0, 0.4);
       color: #ffd700;
       font-family: 'Orbitron', sans-serif;
@@ -198,8 +198,8 @@
     }
 
     .audio-btn:hover {
-      background: rgba(255, 215, 0, 0.2);
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      background: rgba(255, 215, 0, 0.25);
+      box-shadow: 0 0 18px rgba(255, 215, 0, 0.6);
     }
 
     /* Target Reticle / Lock-on Badge */
@@ -216,12 +216,12 @@
     }
 
     .reticle {
-      width: 56px;
-      height: 56px;
-      border: 2px dashed rgba(255, 85, 0, 0.8);
+      width: 58px;
+      height: 58px;
+      border: 2px dashed rgba(255, 85, 0, 0.85);
       border-radius: 50%;
       animation: rotateReticle 6s linear infinite;
-      box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+      box-shadow: 0 0 18px rgba(255, 85, 0, 0.5);
     }
 
     @keyframes rotateReticle {
@@ -234,12 +234,13 @@
       font-size: 10px;
       letter-spacing: 2px;
       color: #ffd700;
-      background: rgba(0,0,0,0.6);
-      padding: 2px 6px;
+      background: rgba(0,0,0,0.7);
+      padding: 2px 7px;
       border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
     }
 
-    /* Bottom Control & Log Dock */
+    /* Bottom Dock */
     .bottom-dock {
       display: flex;
       flex-direction: column;
@@ -250,11 +251,11 @@
 
     /* 3D Flight & Combat Controls Guide */
     .controls-guide {
-      background: rgba(10, 14, 26, 0.82);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(10, 14, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 14px;
       padding: 8px 18px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -281,16 +282,16 @@
       justify-content: center;
       gap: 10px;
       width: 100%;
-      max-width: 900px;
+      max-width: 920px;
     }
 
     .action-btn {
-      background: rgba(15, 23, 42, 0.85);
-      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.16);
       color: #ffffff;
       font-family: 'Rajdhani', sans-serif;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       padding: 10px 18px;
       border-radius: 12px;
       cursor: pointer;
@@ -298,8 +299,8 @@
       align-items: center;
       gap: 8px;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
     }
 
     .action-btn:hover:not(:disabled) {
@@ -317,30 +318,30 @@
     }
 
     .btn-melee { border-color: #f97316; }
-    .btn-melee:hover:not(:disabled) { box-shadow: 0 0 20px rgba(249, 115, 22, 0.6); }
+    .btn-melee:hover:not(:disabled) { box-shadow: 0 0 24px rgba(249, 115, 22, 0.7); }
 
     .btn-blast { border-color: #06b6d4; }
-    .btn-blast:hover:not(:disabled) { box-shadow: 0 0 20px rgba(6, 182, 212, 0.6); }
+    .btn-blast:hover:not(:disabled) { box-shadow: 0 0 24px rgba(6, 182, 212, 0.7); }
 
     .btn-charge { border-color: #eab308; }
-    .btn-charge:hover:not(:disabled) { box-shadow: 0 0 20px rgba(234, 179, 8, 0.6); }
+    .btn-charge:hover:not(:disabled) { box-shadow: 0 0 24px rgba(234, 179, 8, 0.7); }
 
     .btn-kamehameha { border-color: #00f0ff; background: linear-gradient(135deg, #092c3f, #041a27); }
-    .btn-kamehameha:hover:not(:disabled) { box-shadow: 0 0 25px rgba(0, 240, 255, 0.8); }
+    .btn-kamehameha:hover:not(:disabled) { box-shadow: 0 0 30px rgba(0, 240, 255, 0.9); }
 
     .btn-guard { border-color: #10b981; }
-    .btn-guard:hover:not(:disabled) { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+    .btn-guard:hover:not(:disabled) { box-shadow: 0 0 24px rgba(16, 185, 129, 0.7); }
 
     /* Event Notification Toast */
     .event-toast {
       position: absolute;
-      top: 85px;
+      top: 88px;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Bungee', cursive;
-      font-size: 20px;
+      font-size: 22px;
       color: #ffd700;
-      text-shadow: 0 0 15px rgba(255, 85, 0, 0.8), 0 0 25px #000;
+      text-shadow: 0 0 16px rgba(255, 85, 0, 0.9), 0 0 30px #000;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -363,8 +364,8 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(12px);
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(14px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -382,14 +383,14 @@
       border-radius: 28px;
       padding: 40px 50px;
       text-align: center;
-      box-shadow: 0 0 60px rgba(255, 215, 0, 0.45);
+      box-shadow: 0 0 65px rgba(255, 215, 0, 0.5);
       max-width: 480px;
       width: 90%;
     }
 
     .modal-title {
       font-family: 'Bungee', cursive;
-      font-size: 40px;
+      font-size: 42px;
       margin-bottom: 12px;
     }
 
@@ -444,7 +445,7 @@
     <div class="top-bar">
       <div class="brand-box">
         <h1 class="title">DRAGON BALL Z</h1>
-        <div class="subtitle">3D Spatial Arena · OpenSpec Edition</div>
+        <div class="subtitle">Realistic 3D Arena · OpenSpec Edition</div>
       </div>
 
       <div class="fighter-status-row">
@@ -537,7 +538,7 @@
   <div class="modal-overlay" id="outcomeModal">
     <div class="modal-card">
       <h2 class="modal-title" id="modalTitle">GOKU WINS!</h2>
-      <p class="modal-desc" id="modalDesc">Victory achieved! The 3D Saiyan Battle Arena has been conquered!</p>
+      <p class="modal-desc" id="modalDesc">Earth is safe! The Saiyan Prince acknowledges your supreme mastery!</p>
       <button class="btn-rematch" onclick="resetGame()">BATTLE AGAIN</button>
     </div>
   </div>
@@ -655,192 +656,183 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0c16);
-    scene.fog = new THREE.FogExp2(0x0a0c16, 0.012);
+    scene.fog = new THREE.FogExp2(0x0a0c16, 0.011);
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // 3D Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffeedd, 0.85);
-    sunLight.position.set(30, 60, 20);
+    const sunLight = new THREE.DirectionalLight(0xffeedd, 0.95);
+    sunLight.position.set(30, 70, 25);
     sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
     scene.add(sunLight);
 
-    const gokuLight = new THREE.PointLight(0xffaa00, 1.2, 18);
+    const gokuLight = new THREE.PointLight(0xffaa00, 1.4, 25);
     scene.add(gokuLight);
 
-    const vegetaLight = new THREE.PointLight(0xaa00ff, 1.2, 18);
+    const vegetaLight = new THREE.PointLight(0xaa00ff, 1.4, 25);
     scene.add(vegetaLight);
 
     // 3D Terrain & Wasteland Arena
-    const arenaSize = 160;
+    const arenaSize = 180;
     const groundGeo = new THREE.PlaneGeometry(arenaSize, arenaSize, 32, 32);
     const groundMat = new THREE.MeshStandardMaterial({
-      color: 0x1f1610,
-      roughness: 0.9,
-      metalness: 0.1
+      color: 0x1a140f,
+      roughness: 0.85,
+      metalness: 0.15
     });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Arena Energy Grid Boundary
-    const grid = new THREE.GridHelper(arenaSize, 40, 0xff5500, 0x332211);
+    // Energy Boundary Grid
+    const grid = new THREE.GridHelper(arenaSize, 40, 0xff5500, 0x3a2211);
     grid.position.y = 0.05;
     scene.add(grid);
 
-    // Floating Rocky Boulders
+    // Floating Boulders in 3D Space
     const boulders = [];
-    const boulderGeo = new THREE.DodecahedronGeometry(2, 1);
-    const boulderMat = new THREE.MeshStandardMaterial({ color: 0x3b2d22, roughness: 0.95 });
+    const boulderGeo = new THREE.DodecahedronGeometry(2.4, 1);
+    const boulderMat = new THREE.MeshStandardMaterial({ color: 0x36281e, roughness: 0.95 });
 
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < 30; i++) {
       const boulder = new THREE.Mesh(boulderGeo, boulderMat);
       const angle = Math.random() * Math.PI * 2;
-      const radius = 25 + Math.random() * 50;
+      const radius = 25 + Math.random() * 55;
       boulder.position.set(
         Math.cos(angle) * radius,
-        3 + Math.random() * 22,
+        3 + Math.random() * 24,
         Math.sin(angle) * radius
       );
       boulder.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-      boulder.scale.setScalar(0.7 + Math.random() * 1.6);
+      boulder.scale.setScalar(0.8 + Math.random() * 1.8);
+      boulder.castShadow = true;
       scene.add(boulder);
       boulders.push({ mesh: boulder, speed: (Math.random() - 0.5) * 0.015 });
     }
 
-    // --- Texture Loader for Anime Face Emblems ---
+    // --- High-Resolution Realistic Character Textures ---
     const texLoader = new THREE.TextureLoader();
-    const gokuTex = texLoader.load('assets/goku.jpg');
-    const vegetaTex = texLoader.load('assets/vegeta.jpg');
+    const goku3dTex = texLoader.load('assets/goku_3d.jpg');
+    const vegeta3dTex = texLoader.load('assets/vegeta_3d.jpg');
 
-    // --- Build 3D Fighter Character Rigs ---
-    function createFighterRig(isGoku) {
+    // --- Build Realistic 3D Fighter Rigs ---
+    function createRealisticFighterRig(isGoku) {
       const group = new THREE.Group();
 
-      // Body / Torso
-      const bodyGeo = new THREE.CylinderGeometry(0.5, 0.4, 1.4, 8);
-      const bodyMat = new THREE.MeshStandardMaterial({
-        color: isGoku ? 0xff5500 : 0x1e3a8a, // Orange Gi or Blue Suit
-        roughness: 0.6
-      });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.position.y = 1.3;
-      body.castShadow = true;
-      group.add(body);
-
-      // Chest Emblem / Armor Plate
-      const chestGeo = new THREE.BoxGeometry(0.85, 0.7, 0.65);
-      const chestMat = new THREE.MeshStandardMaterial({
-        color: isGoku ? 0xff6600 : 0xf1f5f9, // Saiyan armor plate
-        roughness: 0.4
-      });
-      const chest = new THREE.Mesh(chestGeo, chestMat);
-      chest.position.y = 1.4;
-      group.add(chest);
-
-      // Head & Anime Face Billboard
-      const headGeo = new THREE.SphereGeometry(0.42, 16, 16);
-      const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
-      const head = new THREE.Mesh(headGeo, headMat);
-      head.position.y = 2.3;
-      group.add(head);
-
-      // Textured Character Badge
-      const badgeGeo = new THREE.PlaneGeometry(0.8, 0.8);
-      const badgeMat = new THREE.MeshBasicMaterial({
-        map: isGoku ? gokuTex : vegetaTex,
+      // Main Realistic Full-Body Character Mesh
+      const charWidth = 4.2;
+      const charHeight = 4.8;
+      const charGeo = new THREE.PlaneGeometry(charWidth, charHeight);
+      const charMat = new THREE.MeshStandardMaterial({
+        map: isGoku ? goku3dTex : vegeta3dTex,
         transparent: true,
+        roughness: 0.4,
+        metalness: 0.1,
         side: THREE.DoubleSide
       });
-      const badge = new THREE.Mesh(badgeGeo, badgeMat);
-      badge.position.set(0, 2.3, 0.45);
-      group.add(badge);
+      const charMesh = new THREE.Mesh(charGeo, charMat);
+      charMesh.position.y = charHeight / 2;
+      charMesh.castShadow = true;
+      group.add(charMesh);
 
-      // Spiky Saiyan Hair
-      const hairColor = isGoku ? 0xffd700 : 0x111111;
-      const hairMat = new THREE.MeshStandardMaterial({
-        color: hairColor,
-        roughness: 0.3,
-        emissive: isGoku ? 0xffaa00 : 0x220044,
-        emissiveIntensity: 0.35
-      });
-
-      const hairGroup = new THREE.Group();
-      for (let i = 0; i < 7; i++) {
-        const spikeGeo = new THREE.ConeGeometry(0.2, 0.85, 5);
-        const spike = new THREE.Mesh(spikeGeo, hairMat);
-        spike.position.set(
-          (Math.random() - 0.5) * 0.5,
-          2.6 + Math.random() * 0.3,
-          (Math.random() - 0.5) * 0.4
-        );
-        spike.rotation.set((Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8);
-        hairGroup.add(spike);
-      }
-      group.add(hairGroup);
-
-      // Volumetric Ki Energy Aura Sphere
-      const auraGeo = new THREE.SphereGeometry(1.6, 16, 16);
+      // 3D Volumetric Ki Energy Aura (Layered Cylinder & Particle Rings)
+      const auraColor = isGoku ? 0xffd700 : 0xa855f7;
+      const auraGeo = new THREE.CylinderGeometry(1.8, 2.2, 5.2, 16, 1, true);
       const auraMat = new THREE.MeshBasicMaterial({
-        color: isGoku ? 0xffd700 : 0xa855f7,
+        color: auraColor,
         transparent: true,
         opacity: 0.25,
-        wireframe: true
+        wireframe: true,
+        side: THREE.DoubleSide
       });
-      const aura = new THREE.Mesh(auraGeo, auraMat);
-      aura.position.y = 1.6;
-      group.add(aura);
+      const auraCylinder = new THREE.Mesh(auraGeo, auraMat);
+      auraCylinder.position.y = 2.4;
+      group.add(auraCylinder);
 
-      // Floating World-Space Health Bar
-      const hpBarGeo = new THREE.PlaneGeometry(2.2, 0.22);
+      // Energy Ring Orbiting Torso
+      const ringGeo = new THREE.TorusGeometry(1.9, 0.06, 8, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: auraColor });
+      const auraRing = new THREE.Mesh(ringGeo, ringMat);
+      auraRing.rotation.x = Math.PI / 2;
+      auraRing.position.y = 2.4;
+      group.add(auraRing);
+
+      // Dynamic 3D Ground Shadow Blob (Scales with flight altitude)
+      const shadowGeo = new THREE.CircleGeometry(1.6, 24);
+      const shadowMat = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.65
+      });
+      const groundShadow = new THREE.Mesh(shadowGeo, shadowMat);
+      groundShadow.rotation.x = -Math.PI / 2;
+      groundShadow.position.y = 0.08;
+      group.add(groundShadow);
+
+      // World-Space 3D Floating Health Bar
+      const hpBarGeo = new THREE.PlaneGeometry(3.0, 0.26);
       const hpBarMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
       const hpBar = new THREE.Mesh(hpBarGeo, hpBarMat);
-      hpBar.position.set(0, 3.4, 0);
+      hpBar.position.set(0, 5.4, 0);
       group.add(hpBar);
 
-      return { group, aura, hpBar, hairGroup };
+      return {
+        group,
+        charMesh,
+        auraCylinder,
+        auraRing,
+        groundShadow,
+        hpBar,
+        isGoku
+      };
     }
 
-    const gokuRig = createFighterRig(true);
-    gokuRig.group.position.set(0, 0, 15);
+    const gokuRig = createRealisticFighterRig(true);
+    gokuRig.group.position.set(0, 0, 16);
     scene.add(gokuRig.group);
 
-    const vegetaRig = createFighterRig(false);
-    vegetaRig.group.position.set(0, 0, -15);
+    const vegetaRig = createRealisticFighterRig(false);
+    vegetaRig.group.position.set(0, 0, -16);
     scene.add(vegetaRig.group);
 
-    // --- Real-Time 3D Projectiles System ---
+    // --- Real-Time 3D Projectiles ---
     const projectiles = [];
 
     function spawnKiBlast(startPos, targetPos, isGoku) {
       sound.playBlast();
       const color = isGoku ? 0x00f0ff : 0xffdd00;
-      const geo = new THREE.SphereGeometry(0.4, 12, 12);
-      const mat = new THREE.MeshBasicMaterial({ color: color });
+      const geo = new THREE.SphereGeometry(0.55, 16, 16);
+      const mat = new THREE.MeshBasicMaterial({ color });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.copy(startPos);
       scene.add(mesh);
+
+      // Add glowing energy trail point light
+      const pLight = new THREE.PointLight(color, 1.2, 8);
+      mesh.add(pLight);
 
       const dir = new THREE.Vector3().subVectors(targetPos, startPos).normalize();
       projectiles.push({
         mesh,
         dir,
-        speed: 45,
+        speed: 50,
         isGoku,
         damage: 10,
-        type: 'blast',
         life: 2.5
       });
     }
 
-    // 3D Kamehameha / Final Flash Beam Cylinder
+    // 3D Kamehameha & Final Flash Cylindrical Beams
     let activeBeam = null;
 
     function fireBeam3D(isGoku) {
@@ -849,9 +841,10 @@
 
       const start = isGoku ? gokuRig.group.position : vegetaRig.group.position;
       const target = isGoku ? vegetaRig.group.position : gokuRig.group.position;
-      const length = start.distanceTo(target) + 15;
+      const length = start.distanceTo(target) + 18;
 
-      const beamGeo = new THREE.CylinderGeometry(1.2, 1.2, length, 16);
+      // Outer Energy Sheath
+      const beamGeo = new THREE.CylinderGeometry(1.6, 1.6, length, 16);
       const beamMat = new THREE.MeshBasicMaterial({
         color: isGoku ? 0x00f0ff : 0xffea00,
         transparent: true,
@@ -859,28 +852,41 @@
       });
       const beamMesh = new THREE.Mesh(beamGeo, beamMat);
 
+      // Inner Core White Beam
+      const coreGeo = new THREE.CylinderGeometry(0.8, 0.8, length, 16);
+      const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      beamMesh.add(coreMesh);
+
       // Orient cylinder between start and target
       const midPoint = new THREE.Vector3().addVectors(start, target).multiplyScalar(0.5);
       beamMesh.position.copy(midPoint);
-      beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3().subVectors(target, start).normalize());
+      beamMesh.quaternion.setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3().subVectors(target, start).normalize()
+      );
       scene.add(beamMesh);
 
       activeBeam = {
         mesh: beamMesh,
         isGoku,
-        life: 0.65,
+        life: 0.7,
         damage: 40
       };
 
-      // Apply damage immediately if aligned
+      // Damage calculation
       if (isGoku) {
         let dmg = 40;
         if (gameState.opponent.isGuarding) dmg *= 0.25;
         gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
+        vegetaRig.charMesh.material.color.setHex(0xff3333);
+        setTimeout(() => vegetaRig.charMesh.material.color.setHex(0xffffff), 250);
       } else {
         let dmg = 35;
         if (gameState.player.isGuarding) dmg *= 0.25;
         gameState.player.hp = Math.max(0, gameState.player.hp - dmg);
+        gokuRig.charMesh.material.color.setHex(0xff3333);
+        setTimeout(() => gokuRig.charMesh.material.color.setHex(0xffffff), 250);
       }
       updateHUD();
     }
@@ -893,7 +899,7 @@
       toast.classList.add('active');
     }
 
-    // --- Input Keyboard Tracking for 3D Movement ---
+    // --- Input Keyboard Tracking ---
     const keys = {
       w: false, a: false, s: false, d: false,
       space: false, shift: false,
@@ -906,7 +912,6 @@
       if (key === ' ') keys.space = true;
       if (key === 'shift') keys.shift = true;
 
-      // Combat Hotkeys
       if (key === 'j') triggerPlayerAction('melee');
       if (key === 'k') triggerPlayerAction('blast');
       if (key === 'q') triggerPlayerAction('kamehameha');
@@ -929,17 +934,18 @@
     });
     window.addEventListener('contextmenu', e => e.preventDefault());
 
-    // --- Combat Action Triggers ---
     function startCharging() {
       if (gameState.isGameOver) return;
       gameState.player.isCharging = true;
-      gokuRig.aura.material.opacity = 0.85;
-      showToast("CHARGING KI AURA!");
+      gokuRig.auraCylinder.material.opacity = 0.85;
+      gokuRig.auraRing.scale.setScalar(1.5);
+      showToast("CHARGING SUPER SAIYAN KI!");
     }
 
     function stopCharging() {
       gameState.player.isCharging = false;
-      gokuRig.aura.material.opacity = 0.25;
+      gokuRig.auraCylinder.material.opacity = 0.25;
+      gokuRig.auraRing.scale.setScalar(1);
     }
 
     function triggerPlayerAction(action) {
@@ -955,18 +961,19 @@
           gokuRig.group.position.lerp(dashTarget, 0.45);
           showToast("DRAGON STRIKE!");
 
-          // Deal damage if close
           if (gokuRig.group.position.distanceTo(vegetaRig.group.position) < 8) {
             let dmg = 12;
             if (gameState.opponent.isGuarding) dmg = 3;
             gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
             gameState.player.ki = Math.min(100, gameState.player.ki + 15);
+            vegetaRig.charMesh.material.color.setHex(0xff4444);
+            setTimeout(() => vegetaRig.charMesh.material.color.setHex(0xffffff), 200);
           }
           break;
 
         case 'blast':
-          const start = gokuRig.group.position.clone().add(new THREE.Vector3(0, 1.5, -1));
-          const target = vegetaRig.group.position.clone().add(new THREE.Vector3(0, 1.5, 0));
+          const start = gokuRig.group.position.clone().add(new THREE.Vector3(0, 2.2, -1.2));
+          const target = vegetaRig.group.position.clone().add(new THREE.Vector3(0, 2.2, 0));
           spawnKiBlast(start, target, true);
           gameState.player.ki = Math.min(100, gameState.player.ki + 5);
           break;
@@ -998,14 +1005,12 @@
 
       aiTimer += delta;
 
-      // Circle & Strafe around Goku in 3D
       const gokuPos = gokuRig.group.position;
       const vegPos = vegetaRig.group.position;
 
-      // Maintain hovering combat altitude
+      // Maintain hover altitude
       vegPos.y = THREE.MathUtils.lerp(vegPos.y, gokuPos.y + Math.sin(Date.now() * 0.002) * 2, 0.05);
 
-      // Keep distance around 18 units
       const dist = vegPos.distanceTo(gokuPos);
       if (dist < 12) {
         vegPos.z -= 6 * delta;
@@ -1013,27 +1018,26 @@
         vegPos.z += 8 * delta;
       }
 
-      // Strafe sideways
       vegPos.x += Math.cos(Date.now() * 0.0015) * 5 * delta;
 
-      // AI Decision Cycle every 1.5 seconds
       if (aiTimer > 1.4) {
         aiTimer = 0;
 
         if (gameState.opponent.ki >= 50 && Math.random() > 0.4) {
-          // Final Flash
           gameState.opponent.ki -= 50;
           fireBeam3D(false);
         } else if (gameState.opponent.ki < 40 && Math.random() > 0.4) {
-          // Power up
           sound.playCharge();
           gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 25);
-          vegetaRig.aura.material.opacity = 0.8;
-          setTimeout(() => vegetaRig.aura.material.opacity = 0.25, 600);
+          vegetaRig.auraCylinder.material.opacity = 0.85;
+          vegetaRig.auraRing.scale.setScalar(1.5);
+          setTimeout(() => {
+            vegetaRig.auraCylinder.material.opacity = 0.25;
+            vegetaRig.auraRing.scale.setScalar(1);
+          }, 600);
         } else {
-          // Rapid Ki Blast
-          const start = vegPos.clone().add(new THREE.Vector3(0, 1.5, 1));
-          const target = gokuPos.clone().add(new THREE.Vector3(0, 1.5, 0));
+          const start = vegPos.clone().add(new THREE.Vector3(0, 2.2, 1.2));
+          const target = gokuPos.clone().add(new THREE.Vector3(0, 2.2, 0));
           spawnKiBlast(start, target, false);
           gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 8);
         }
@@ -1052,11 +1056,10 @@
 
       document.getElementById('btnKamehameha').disabled = gameState.player.ki < 50;
 
-      // Power Level Dynamics
       document.getElementById('gokuPower').textContent = `PWR: ${(9000 + gameState.player.ki * 30).toLocaleString()}`;
       document.getElementById('vegetaPower').textContent = `PWR: ${(8800 + gameState.opponent.ki * 28).toLocaleString()}`;
 
-      // Update 3D Floating Health Bars
+      // 3D Floating Health Bars
       gokuRig.hpBar.scale.x = Math.max(0.001, gameState.player.hp / 100);
       vegetaRig.hpBar.scale.x = Math.max(0.001, gameState.opponent.hp / 100);
     }
@@ -1069,7 +1072,7 @@
         sound.playVictory();
         document.getElementById('modalTitle').textContent = "GOKU WINS!";
         document.getElementById('modalTitle').className = "modal-title win-text";
-        document.getElementById('modalDesc').textContent = "Earth is safe! Vegeta was vanquished in the 3D Arena!";
+        document.getElementById('modalDesc').textContent = "Earth is safe! Vegeta acknowledges your supreme Super Saiyan mastery!";
         document.getElementById('outcomeModal').classList.add('active');
       } else if (gameState.player.hp <= 0) {
         gameState.isGameOver = true;
@@ -1087,8 +1090,8 @@
       gameState.opponent.ki = 0;
       gameState.isGameOver = false;
 
-      gokuRig.group.position.set(0, 0, 15);
-      vegetaRig.group.position.set(0, 0, -15);
+      gokuRig.group.position.set(0, 0, 16);
+      vegetaRig.group.position.set(0, 0, -16);
 
       document.getElementById('outcomeModal').classList.remove('active');
       updateHUD();
@@ -1102,34 +1105,74 @@
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
 
-      // Continuous Ki Charging while holding E / Button
       if (gameState.player.isCharging && !gameState.isGameOver) {
         sound.playCharge();
         gameState.player.ki = Math.min(100, gameState.player.ki + 40 * delta);
         updateHUD();
       }
 
-      // 3D Player Movement (WASD + Space/Shift Flight)
+      // 3D Player Movement (WASD + Space/Shift)
       const moveSpeed = 16 * delta;
-      if (keys.w) gokuRig.group.position.z -= moveSpeed;
-      if (keys.s) gokuRig.group.position.z += moveSpeed;
-      if (keys.a) gokuRig.group.position.x -= moveSpeed;
-      if (keys.d) gokuRig.group.position.x += moveSpeed;
+      let isMoving = false;
+
+      if (keys.w) { gokuRig.group.position.z -= moveSpeed; isMoving = true; }
+      if (keys.s) { gokuRig.group.position.z += moveSpeed; isMoving = true; }
+      if (keys.a) { gokuRig.group.position.x -= moveSpeed; isMoving = true; }
+      if (keys.d) { gokuRig.group.position.x += moveSpeed; isMoving = true; }
       if (keys.space) gokuRig.group.position.y += moveSpeed * 1.2;
       if (keys.shift) gokuRig.group.position.y = Math.max(0, gokuRig.group.position.y - moveSpeed * 1.2);
 
+      // 3D Flight Banking / Tilting into movement
+      if (keys.w) {
+        gokuRig.charMesh.rotation.x = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.x, 0.25, 0.1);
+      } else if (keys.s) {
+        gokuRig.charMesh.rotation.x = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.x, -0.25, 0.1);
+      } else {
+        gokuRig.charMesh.rotation.x = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.x, 0, 0.1);
+      }
+
+      if (keys.a) {
+        gokuRig.charMesh.rotation.z = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.z, 0.2, 0.1);
+      } else if (keys.d) {
+        gokuRig.charMesh.rotation.z = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.z, -0.2, 0.1);
+      } else {
+        gokuRig.charMesh.rotation.z = THREE.MathUtils.lerp(gokuRig.charMesh.rotation.z, 0, 0.1);
+      }
+
+      // Idle Floating Bob in Air
+      const idleBob = Math.sin(Date.now() * 0.003) * 0.15;
+      gokuRig.charMesh.position.y = 2.4 + idleBob;
+      vegetaRig.charMesh.position.y = 2.4 + Math.sin(Date.now() * 0.003 + 1) * 0.15;
+
+      // Rotate Aura Rings
+      gokuRig.auraRing.rotation.z += 2 * delta;
+      vegetaRig.auraRing.rotation.z -= 2 * delta;
+
+      // Update Ground Shadow Size & Opacity based on height
+      const gokuAltitude = Math.max(0.1, gokuRig.group.position.y);
+      gokuRig.groundShadow.position.y = -gokuRig.group.position.y + 0.05;
+      gokuRig.groundShadow.scale.setScalar(Math.max(0.4, 1.2 - gokuAltitude * 0.04));
+      gokuRig.groundShadow.material.opacity = Math.max(0.15, 0.65 - gokuAltitude * 0.03);
+
+      const vegAltitude = Math.max(0.1, vegetaRig.group.position.y);
+      vegetaRig.groundShadow.position.y = -vegetaRig.group.position.y + 0.05;
+      vegetaRig.groundShadow.scale.setScalar(Math.max(0.4, 1.2 - vegAltitude * 0.04));
+      vegetaRig.groundShadow.material.opacity = Math.max(0.15, 0.65 - vegAltitude * 0.03);
+
       // Boundary clamp
-      gokuRig.group.position.x = THREE.MathUtils.clamp(gokuRig.group.position.x, -55, 55);
-      gokuRig.group.position.z = THREE.MathUtils.clamp(gokuRig.group.position.z, -55, 55);
-      gokuRig.group.position.y = THREE.MathUtils.clamp(gokuRig.group.position.y, 0, 30);
+      gokuRig.group.position.x = THREE.MathUtils.clamp(gokuRig.group.position.x, -60, 60);
+      gokuRig.group.position.z = THREE.MathUtils.clamp(gokuRig.group.position.z, -60, 60);
+      gokuRig.group.position.y = THREE.MathUtils.clamp(gokuRig.group.position.y, 0, 32);
 
       // Lights follow characters
-      gokuLight.position.copy(gokuRig.group.position).add(new THREE.Vector3(0, 2, 0));
-      vegetaLight.position.copy(vegetaRig.group.position).add(new THREE.Vector3(0, 2, 0));
+      gokuLight.position.copy(gokuRig.group.position).add(new THREE.Vector3(0, 2.5, 0));
+      vegetaLight.position.copy(vegetaRig.group.position).add(new THREE.Vector3(0, 2.5, 0));
 
-      // Make 3D characters face each other
-      gokuRig.group.lookAt(vegetaRig.group.position.x, gokuRig.group.position.y, vegetaRig.group.position.z);
-      vegetaRig.group.lookAt(gokuRig.group.position.x, vegetaRig.group.position.y, gokuRig.group.position.z);
+      // Make 3D characters face the camera / opponent for optimal viewing
+      gokuRig.charMesh.lookAt(camera.position);
+      vegetaRig.charMesh.lookAt(camera.position);
+      gokuRig.hpBar.lookAt(camera.position);
+      vegetaRig.hpBar.lookAt(camera.position);
 
       // Rotate floating boulders
       boulders.forEach(b => {
@@ -1146,18 +1189,21 @@
         p.mesh.position.addScaledVector(p.dir, p.speed * delta);
         p.life -= delta;
 
-        // Collision detection
         const targetGroup = p.isGoku ? vegetaRig.group : gokuRig.group;
-        if (p.mesh.position.distanceTo(targetGroup.position.clone().add(new THREE.Vector3(0, 1.5, 0))) < 2.5) {
+        if (p.mesh.position.distanceTo(targetGroup.position.clone().add(new THREE.Vector3(0, 2.2, 0))) < 3.2) {
           sound.playPunch();
           if (p.isGoku) {
             let dmg = p.damage;
             if (gameState.opponent.isGuarding) dmg *= 0.25;
             gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
+            vegetaRig.charMesh.material.color.setHex(0xff3333);
+            setTimeout(() => vegetaRig.charMesh.material.color.setHex(0xffffff), 200);
           } else {
             let dmg = p.damage;
             if (gameState.player.isGuarding) dmg *= 0.25;
             gameState.player.hp = Math.max(0, gameState.player.hp - dmg);
+            gokuRig.charMesh.material.color.setHex(0xff3333);
+            setTimeout(() => gokuRig.charMesh.material.color.setHex(0xffffff), 200);
           }
           scene.remove(p.mesh);
           projectiles.splice(i, 1);
@@ -1186,11 +1232,10 @@
       const gokuPos = gokuRig.group.position;
       const vegPos = vegetaRig.group.position;
 
-      // Position camera behind Goku along the line from Vegeta to Goku
       const camDir = new THREE.Vector3().subVectors(gokuPos, vegPos).normalize();
-      const idealCamPos = gokuPos.clone().addScaledVector(camDir, 9).add(new THREE.Vector3(0, 3.8, 0));
+      const idealCamPos = gokuPos.clone().addScaledVector(camDir, 10.5).add(new THREE.Vector3(0, 4.2, 0));
       camera.position.lerp(idealCamPos, 0.12);
-      camera.lookAt(vegPos.x, vegPos.y + 1.2, vegPos.z);
+      camera.lookAt(vegPos.x, vegPos.y + 1.8, vegPos.z);
 
       renderer.render(scene, camera);
     }
