@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dragon Ball Z: Ki Clash Arena · Super Saiyan Edition</title>
+  <title>Dragon Ball Z: 3D Ki Clash Arena · Full Spatial Combat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js 3D WebGL Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <style>
     :root {
-      --bg-dark: #07090e;
-      --card-bg: rgba(13, 16, 26, 0.88);
-      --goku-primary: #ff5500;
       --goku-gold: #ffd700;
       --goku-cyan: #00f0ff;
-      --vegeta-primary: #2e44ff;
       --vegeta-purple: #c026d3;
       --vegeta-gold: #facc15;
-      --hp-green: #10b981;
-      --hp-danger: #ef4444;
-      --ki-blue: #06b6d4;
     }
 
     * {
@@ -30,76 +27,65 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image: linear-gradient(rgba(5, 7, 12, 0.75), rgba(7, 9, 14, 0.85)), url('assets/battlefield.jpg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
+      background-color: #05070c;
       color: #ffffff;
       font-family: 'Rajdhani', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      overflow-x: hidden;
-      padding: 14px;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       position: relative;
     }
 
-    /* Ambient Particle Canvas Overlay */
-    #fxCanvas {
-      position: fixed;
+    /* 3D WebGL Canvas */
+    #webgl-canvas {
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
       z-index: 1;
+      display: block;
     }
 
-    /* Screen Shake & Flashes */
-    .screen-shake {
-      animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
-    }
-
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-4px, 2px, 0); }
-      20%, 80% { transform: translate3d(5px, -3px, 0); }
-      30%, 50%, 70% { transform: translate3d(-7px, 4px, 0); }
-      40%, 60% { transform: translate3d(7px, -4px, 0); }
-    }
-
-    /* Top Scouter Header */
-    header {
+    /* UI Overlay Layer */
+    .hud-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 1100px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
+      height: 100%;
       z-index: 10;
-      margin-bottom: 8px;
-      padding: 6px 12px;
-      background: rgba(10, 14, 24, 0.7);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-    }
-
-    .brand {
+      pointer-events: none;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      padding: 18px 24px;
+    }
+
+    /* Top Bar HUD */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .brand-box {
+      background: rgba(10, 14, 26, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 8px 16px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
 
     .title {
       font-family: 'Bungee', cursive;
-      font-size: clamp(20px, 3.5vw, 36px);
-      letter-spacing: 2px;
-      background: linear-gradient(180deg, #fff200 0%, #ff5500 65%, #cc0000 100%);
+      font-size: clamp(20px, 2.5vw, 32px);
+      background: linear-gradient(180deg, #fff200 0%, #ff5500 70%, #cc0000 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 16px rgba(255, 85, 0, 0.75));
+      filter: drop-shadow(0 0 14px rgba(255, 85, 0, 0.7));
       line-height: 1.1;
     }
 
@@ -107,426 +93,217 @@
       font-family: 'Orbitron', sans-serif;
       font-size: 11px;
       color: #38bdf8;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
-    .scouter-dock {
+    /* Fighter Status HUDs */
+    .fighter-status-row {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      gap: 20px;
+      flex: 1;
+      max-width: 650px;
     }
 
-    .scouter-box {
-      font-family: 'Orbitron', monospace;
-      font-size: 12px;
-      background: rgba(6, 78, 59, 0.6);
-      border: 1px solid #10b981;
-      border-radius: 8px;
-      padding: 4px 10px;
-      color: #34d399;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-audio {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 6px 12px;
-      color: #ffd700;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-audio:hover {
-      background: rgba(255, 215, 0, 0.2);
-      border-color: #ffd700;
-    }
-
-    /* Main Battle Arena */
-    .arena-container {
-      width: 100%;
-      max-width: 1100px;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 24px;
-      align-items: center;
-      position: relative;
-      z-index: 10;
-    }
-
-    @media (max-width: 820px) {
-      .arena-container {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-    }
-
-    /* Fighter Card */
-    .fighter-card {
-      background: var(--card-bg);
-      border-radius: 20px;
+    .status-panel {
+      flex: 1;
+      background: rgba(12, 17, 30, 0.8);
       border: 2px solid rgba(255, 255, 255, 0.12);
-      padding: 22px;
-      backdrop-filter: blur(14px);
-      position: relative;
+      border-radius: 14px;
+      padding: 10px 14px;
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.7);
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
 
-    .fighter-card.goku {
-      border-color: rgba(255, 136, 0, 0.5);
-      box-shadow: 0 0 35px rgba(255, 85, 0, 0.25);
+    .status-panel.goku {
+      border-color: rgba(255, 120, 0, 0.5);
+      box-shadow: 0 0 20px rgba(255, 85, 0, 0.25);
     }
 
-    .fighter-card.vegeta {
+    .status-panel.vegeta {
       border-color: rgba(99, 102, 241, 0.5);
-      box-shadow: 0 0 35px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.25);
     }
 
-    /* Attack Lunge & Hit Reactions */
-    .lunge-right {
-      animation: lungeRight 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes lungeRight {
-      0% { transform: translateX(0); }
-      40% { transform: translateX(45px) scale(1.05); }
-      100% { transform: translateX(0); }
-    }
-
-    .lunge-left {
-      animation: lungeLeft 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes lungeLeft {
-      0% { transform: translateX(0); }
-      40% { transform: translateX(-45px) scale(1.05); }
-      100% { transform: translateX(0); }
-    }
-
-    .hit-recoil {
-      animation: hitRecoil 0.35s ease-in-out;
-    }
-    @keyframes hitRecoil {
-      0% { filter: brightness(2.5) drop-shadow(0 0 30px #ff2222); transform: scale(0.96); }
-      50% { transform: scale(1.04) rotate(2deg); }
-      100% { filter: none; transform: scale(1); }
-    }
-
-    /* High-Resolution Character Portrait */
-    .portrait-frame {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .portrait-img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      position: relative;
-      z-index: 3;
-      border: 4px solid #ffd700;
-      box-shadow: 0 0 25px rgba(255, 170, 0, 0.6);
-      transition: all 0.3s ease;
-    }
-
-    .vegeta .portrait-img {
-      border-color: #818cf8;
-      box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
-    }
-
-    /* Aura Flame Effects */
-    .aura-ring {
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0.6;
-      transition: all 0.4s ease;
-    }
-
-    .goku .aura-ring {
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.7) 0%, rgba(255, 85, 0, 0.3) 60%, transparent 80%);
-      animation: spinAura 3s linear infinite, pulseGlow 1.4s ease-in-out infinite alternate;
-    }
-
-    .vegeta .aura-ring {
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.7) 0%, rgba(59, 130, 246, 0.3) 60%, transparent 80%);
-      animation: spinAura 3s linear infinite reverse, pulseGlow 1.4s ease-in-out infinite alternate;
-    }
-
-    .aura-ring.surging {
-      opacity: 1;
-      transform: scale(1.3);
-      filter: drop-shadow(0 0 40px #ffd700);
-    }
-
-    @keyframes spinAura {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulseGlow {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.15); }
-    }
-
-    /* Overdrive Super Saiyan Glow Banner */
-    .overdrive-badge {
-      display: none;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      font-weight: 900;
-      color: #000;
-      background: linear-gradient(90deg, #ffd700, #ff5500);
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-bottom: 8px;
-      letter-spacing: 2px;
-      box-shadow: 0 0 20px #ffd700;
-      animation: blinkOverdrive 0.8s infinite alternate;
-    }
-
-    .overdrive-badge.active {
-      display: inline-block;
-    }
-
-    @keyframes blinkOverdrive {
-      from { opacity: 0.7; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1.05); }
-    }
-
-    .fighter-name {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 2px;
-    }
-
-    .goku .fighter-name { color: #f59e0b; text-shadow: 0 0 12px rgba(245, 158, 11, 0.6); }
-    .vegeta .fighter-name { color: #818cf8; text-shadow: 0 0 12px rgba(129, 140, 248, 0.6); }
-
-    .fighter-title {
-      font-size: 13px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 16px;
-    }
-
-    /* Gauges */
-    .stat-box {
-      width: 100%;
-      margin-bottom: 12px;
-    }
-
-    .stat-header {
+    .name-row {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
     }
 
-    .bar-outer {
+    .goku .name-text { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+    .vegeta .name-text { color: #818cf8; text-shadow: 0 0 10px rgba(129, 140, 248, 0.6); }
+
+    .power-level {
+      font-size: 11px;
+      color: #34d399;
+      background: rgba(6, 78, 59, 0.6);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #10b981;
+    }
+
+    .bar-wrap {
       width: 100%;
-      height: 20px;
-      background: #090d18;
-      border-radius: 12px;
+      height: 14px;
+      background: #090d16;
+      border-radius: 8px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       position: relative;
     }
 
     .bar-fill {
       height: 100%;
       width: 100%;
-      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 10px;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 6px;
     }
 
     .hp-fill {
       background: linear-gradient(90deg, #059669, #10b981, #34d399);
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.6);
-    }
-
-    .hp-fill.danger {
-      background: linear-gradient(90deg, #b91c1c, #ef4444, #f87171);
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.75);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
     }
 
     .ki-fill {
       background: linear-gradient(90deg, #0284c7, #06b6d4, #67e8f9);
-      box-shadow: 0 0 14px rgba(6, 182, 212, 0.7);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
       width: 0%;
     }
 
     .vegeta .ki-fill {
       background: linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
-      box-shadow: 0 0 14px rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
     }
 
-    /* Floating Combat Text */
-    .combat-floater {
-      position: absolute;
-      top: 35%;
-      font-family: 'Bungee', cursive;
-      font-size: 26px;
-      pointer-events: none;
-      z-index: 100;
-      animation: floatUpFade 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      text-shadow: 0 0 10px #000, 0 0 20px rgba(255, 85, 0, 0.8);
-    }
-
-    .floater-damage { color: #ff3344; }
-    .floater-crit { color: #ffd700; font-size: 32px; filter: drop-shadow(0 0 15px #ff5500); }
-    .floater-ki { color: #00f0ff; }
-    .floater-guard { color: #10b981; }
-
-    @keyframes floatUpFade {
-      0% { opacity: 0; transform: translateY(15px) scale(0.6); }
-      30% { opacity: 1; transform: translateY(-10px) scale(1.2); }
-      100% { opacity: 0; transform: translateY(-50px) scale(0.9); }
-    }
-
-    /* VS Centerpiece */
-    .vs-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .vs-badge {
-      font-family: 'Bungee', cursive;
-      font-size: 34px;
+    .audio-btn {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.4);
       color: #ffd700;
-      background: radial-gradient(circle, #2e1065 0%, #0f172a 100%);
-      padding: 12px 20px;
-      border-radius: 50%;
-      border: 3px solid #ff5500;
-      box-shadow: 0 0 35px rgba(255, 85, 0, 0.7);
-      animation: pulseVs 2s infinite ease-in-out;
-    }
-
-    @keyframes pulseVs {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); box-shadow: 0 0 45px #ffd700; }
-    }
-
-    /* Energy Beam Animations */
-    .beam-fx {
-      position: fixed;
-      top: 42%;
-      height: 80px;
-      border-radius: 40px;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 100;
-      transition: opacity 0.15s ease;
-    }
-
-    .beam-kamehameha {
-      left: 18%;
-      right: 18%;
-      background: linear-gradient(90deg, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #ffffff 100%);
-      box-shadow: 0 0 70px #00f0ff, 0 0 120px #0284c7;
-      animation: beamPulse 0.1s infinite alternate;
-    }
-
-    .beam-finalflash {
-      left: 18%;
-      right: 18%;
-      background: linear-gradient(90deg, #ffffff 0%, #fde047 30%, #eab308 70%, #ffffff 100%);
-      box-shadow: 0 0 70px #ffd700, 0 0 120px #ca8a04;
-      animation: beamPulse 0.1s infinite alternate;
-    }
-
-    @keyframes beamPulse {
-      from { transform: scaleY(0.92); }
-      to { transform: scaleY(1.15); }
-    }
-
-    /* Controls Panel */
-    .controls-panel {
-      width: 100%;
-      max-width: 1100px;
-      margin-top: 14px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 18px 24px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(14px);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      z-index: 10;
-    }
-
-    .controls-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .controls-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 14px;
-      color: #ffd700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
 
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+    .audio-btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Target Reticle / Lock-on Badge */
+    .reticle-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reticle {
+      width: 56px;
+      height: 56px;
+      border: 2px dashed rgba(255, 85, 0, 0.8);
+      border-radius: 50%;
+      animation: rotateReticle 6s linear infinite;
+      box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+    }
+
+    @keyframes rotateReticle {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .lock-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #ffd700;
+      background: rgba(0,0,0,0.6);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Bottom Control & Log Dock */
+    .bottom-dock {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* 3D Flight & Combat Controls Guide */
+    .controls-guide {
+      background: rgba(10, 14, 26, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 8px 18px;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .key-badge {
+      color: #ffd700;
+      background: #1e293b;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      font-weight: 700;
+    }
+
+    /* Action Buttons (Clickable or Keyboard) */
+    .action-dock {
+      pointer-events: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 900px;
     }
 
     .action-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
       font-family: 'Rajdhani', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      color: #ffffff;
-      background: #141a29;
-      border: 2px solid rgba(255, 255, 255, 0.12);
+      gap: 8px;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      position: relative;
-      overflow: hidden;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
     .action-btn:hover:not(:disabled) {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      transform: translateY(-3px) scale(1.03);
     }
 
     .action-btn:active:not(:disabled) {
@@ -539,97 +316,60 @@
       filter: grayscale(0.8);
     }
 
-    .btn-punch {
-      border-color: #f97316;
-      background: linear-gradient(135deg, #2d180c 0%, #170d06 100%);
-    }
-    .btn-punch:hover:not(:disabled) {
-      box-shadow: 0 0 24px rgba(249, 115, 22, 0.6);
-      border-color: #fb923c;
+    .btn-melee { border-color: #f97316; }
+    .btn-melee:hover:not(:disabled) { box-shadow: 0 0 20px rgba(249, 115, 22, 0.6); }
+
+    .btn-blast { border-color: #06b6d4; }
+    .btn-blast:hover:not(:disabled) { box-shadow: 0 0 20px rgba(6, 182, 212, 0.6); }
+
+    .btn-charge { border-color: #eab308; }
+    .btn-charge:hover:not(:disabled) { box-shadow: 0 0 20px rgba(234, 179, 8, 0.6); }
+
+    .btn-kamehameha { border-color: #00f0ff; background: linear-gradient(135deg, #092c3f, #041a27); }
+    .btn-kamehameha:hover:not(:disabled) { box-shadow: 0 0 25px rgba(0, 240, 255, 0.8); }
+
+    .btn-guard { border-color: #10b981; }
+    .btn-guard:hover:not(:disabled) { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+
+    /* Event Notification Toast */
+    .event-toast {
+      position: absolute;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Bungee', cursive;
+      font-size: 20px;
+      color: #ffd700;
+      text-shadow: 0 0 15px rgba(255, 85, 0, 0.8), 0 0 25px #000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 20;
     }
 
-    .btn-charge {
-      border-color: #eab308;
-      background: linear-gradient(135deg, #2b2308 0%, #151104 100%);
-    }
-    .btn-charge:hover:not(:disabled) {
-      box-shadow: 0 0 24px rgba(234, 179, 8, 0.6);
-      border-color: #fde047;
+    .event-toast.active {
+      opacity: 1;
+      animation: toastPop 1s forwards;
     }
 
-    .btn-kamehameha {
-      border-color: #06b6d4;
-      background: linear-gradient(135deg, #092c3f 0%, #051824 100%);
-    }
-    .btn-kamehameha:hover:not(:disabled) {
-      box-shadow: 0 0 30px rgba(6, 182, 212, 0.75);
-      border-color: #67e8f9;
+    @keyframes toastPop {
+      0% { transform: translate(-50%, 0) scale(0.8); }
+      20% { transform: translate(-50%, -10px) scale(1.15); }
+      80% { transform: translate(-50%, -15px) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -25px) scale(0.9); opacity: 0; }
     }
 
-    .btn-guard {
-      border-color: #10b981;
-      background: linear-gradient(135deg, #0b2e21 0%, #061811 100%);
-    }
-    .btn-guard:hover:not(:disabled) {
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.6);
-      border-color: #34d399;
-    }
-
-    .btn-cost {
-      font-size: 12px;
-      font-family: 'Orbitron', monospace;
-      padding: 3px 9px;
-      border-radius: 6px;
-      background: rgba(0,0,0,0.6);
-      letter-spacing: 1px;
-    }
-
-    /* Battle Event Log */
-    .log-container {
-      width: 100%;
-      max-width: 1100px;
-      margin-top: 12px;
-      background: rgba(10, 14, 24, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 12px 18px;
-      height: 100px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column-reverse;
-      gap: 6px;
-      z-index: 10;
-      backdrop-filter: blur(10px);
-    }
-
-    .log-entry {
-      font-size: 15px;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      animation: fadeIn 0.25s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .log-goku { color: #fb923c; }
-    .log-vegeta { color: #818cf8; }
-    .log-system { color: #fde047; font-weight: 700; }
-
-    /* Victory / Defeat Overlay Modal */
+    /* Victory / Defeat Modal */
     .modal-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      pointer-events: auto;
     }
 
     .modal-overlay.active {
@@ -645,17 +385,11 @@
       box-shadow: 0 0 60px rgba(255, 215, 0, 0.45);
       max-width: 480px;
       width: 90%;
-      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes modalPop {
-      0% { transform: scale(0.7); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
     }
 
     .modal-title {
       font-family: 'Bungee', cursive;
-      font-size: 42px;
+      font-size: 40px;
       margin-bottom: 12px;
     }
 
@@ -674,15 +408,15 @@
     }
 
     .modal-desc {
-      font-size: 17px;
+      font-size: 16px;
       color: #e2e8f0;
-      margin-bottom: 26px;
+      margin-bottom: 24px;
     }
 
     .btn-rematch {
       font-family: 'Bungee', cursive;
-      font-size: 20px;
-      padding: 16px 36px;
+      font-size: 18px;
+      padding: 14px 34px;
       background: linear-gradient(90deg, #ff5500, #ffd700);
       border: none;
       border-radius: 14px;
@@ -694,227 +428,122 @@
 
     .btn-rematch:hover {
       transform: scale(1.06);
-      box-shadow: 0 0 45px rgba(255, 215, 0, 0.95);
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.95);
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Particle Canvas Engine -->
-  <canvas id="fxCanvas"></canvas>
+  <!-- WebGL 3D Canvas -->
+  <canvas id="webgl-canvas"></canvas>
 
-  <header>
-    <div class="brand">
-      <h1 class="title">DRAGON BALL Z</h1>
-      <div class="subtitle">Ki Clash Arena · Super Saiyan Edition</div>
-    </div>
-    <div class="scouter-dock">
-      <div class="scouter-box" id="scouterGoku">
-        <span>⚡ GOKU POWER:</span>
-        <strong id="gokuPower">9,001</strong>
-      </div>
-      <button class="btn-audio" id="btnAudio" onclick="toggleAudio()">🔊 SFX: ON</button>
-    </div>
-  </header>
-
-  <!-- Energy Beam Visual FX -->
-  <div id="beamFx" class="beam-fx"></div>
-
-  <!-- Arena Grid -->
-  <main class="arena-container" id="arena">
+  <!-- HUD Interface Layer -->
+  <div class="hud-layer">
     
-    <!-- Player: Goku -->
-    <section class="fighter-card goku" id="gokuCard">
-      <div class="overdrive-badge" id="gokuOverdrive">⚡ OVERDRIVE READY! ⚡</div>
-      
-      <div class="portrait-frame">
-        <div class="aura-ring" id="gokuAura"></div>
-        <img src="assets/goku.jpg" alt="Son Goku Super Saiyan" class="portrait-img" id="gokuPortrait">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="brand-box">
+        <h1 class="title">DRAGON BALL Z</h1>
+        <div class="subtitle">3D Spatial Arena · OpenSpec Edition</div>
       </div>
 
-      <div class="fighter-name">SON GOKU</div>
-      <div class="fighter-title">Super Saiyan Earth Protector</div>
-
-      <div class="stat-box">
-        <div class="stat-header">
-          <span>Health (HP)</span>
-          <span id="gokuHpText">100 / 100</span>
+      <div class="fighter-status-row">
+        <!-- Goku Status -->
+        <div class="status-panel goku">
+          <div class="name-row">
+            <span class="name-text">🥋 SON GOKU</span>
+            <span class="power-level" id="gokuPower">PWR: 9,001</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill hp-fill" id="gokuHpBar" style="width: 100%;"></div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill ki-fill" id="gokuKiBar" style="width: 0%;"></div>
+          </div>
         </div>
-        <div class="bar-outer">
-          <div class="bar-fill hp-fill" id="gokuHpBar" style="width: 100%;"></div>
+
+        <!-- Vegeta Status -->
+        <div class="status-panel vegeta">
+          <div class="name-row">
+            <span class="name-text">👑 VEGETA</span>
+            <span class="power-level" id="vegetaPower">PWR: 8,800</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill hp-fill" id="vegetaHpBar" style="width: 100%;"></div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill ki-fill" id="vegetaKiBar" style="width: 0%;"></div>
+          </div>
         </div>
       </div>
 
-      <div class="stat-box">
-        <div class="stat-header">
-          <span>Ki Energy</span>
-          <span id="gokuKiText">0 / 100</span>
-        </div>
-        <div class="bar-outer">
-          <div class="bar-fill ki-fill" id="gokuKiBar" style="width: 0%;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VS Centerpiece -->
-    <div class="vs-center">
-      <div class="vs-badge">VS</div>
+      <button class="audio-btn" id="audioToggle" onclick="toggleAudio()">🔊 SFX: ON</button>
     </div>
 
-    <!-- Opponent: Vegeta -->
-    <section class="fighter-card vegeta" id="vegetaCard">
-      <div class="portrait-frame">
-        <div class="aura-ring" id="vegetaAura"></div>
-        <img src="assets/vegeta.jpg" alt="Prince Vegeta" class="portrait-img" id="vegetaPortrait">
-      </div>
-
-      <div class="fighter-name">VEGETA</div>
-      <div class="fighter-title">Prince of all Saiyans</div>
-
-      <div class="stat-box">
-        <div class="stat-header">
-          <span>Health (HP)</span>
-          <span id="vegetaHpText">100 / 100</span>
-        </div>
-        <div class="bar-outer">
-          <div class="bar-fill hp-fill" id="vegetaHpBar" style="width: 100%;"></div>
-        </div>
-      </div>
-
-      <div class="stat-box">
-        <div class="stat-header">
-          <span>Ki Energy</span>
-          <span id="vegetaKiText">0 / 100</span>
-        </div>
-        <div class="bar-outer">
-          <div class="bar-fill ki-fill" id="vegetaKiBar" style="width: 0%;"></div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Controls Panel -->
-  <section class="controls-panel">
-    <div class="controls-header">
-      <div class="controls-title">
-        <span>⚡ Command Goku's Battle Move:</span>
-      </div>
-      <div style="font-size: 13px; color: #94a3b8; font-family: 'Orbitron';">
-        <span id="overdriveNotice">Ki Max: Overdrive boost (+25% Dmg)</span>
-      </div>
+    <!-- Center Target Reticle -->
+    <div class="reticle-wrap">
+      <div class="reticle"></div>
+      <div class="lock-label">LOCKED ON VEGETA</div>
     </div>
 
-    <div class="action-grid">
-      <button class="action-btn btn-punch" id="btnPunch" onclick="handlePlayerAction('punch')">
-        <span>👊 Dragon Punch</span>
-        <span class="btn-cost">+15 Ki</span>
-      </button>
+    <!-- Toast Banner -->
+    <div class="event-toast" id="eventToast">KAMEHAMEHA!</div>
 
-      <button class="action-btn btn-charge" id="btnCharge" onclick="handlePlayerAction('charge')">
-        <span>🔥 Charge Ki Aura</span>
-        <span class="btn-cost">+30 Ki</span>
-      </button>
+    <!-- Bottom Dock -->
+    <div class="bottom-dock">
+      <!-- 3D Movement Controls Guide -->
+      <div class="controls-guide">
+        <span>🎮 Move 3D: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span></span>
+        <span>☁️ Fly Up: <span class="key-badge">SPACE</span></span>
+        <span>⬇️ Descend: <span class="key-badge">SHIFT</span></span>
+        <span>👊 Strike: <span class="key-badge">J</span> / Left-Click</span>
+        <span>⚡ Ki Blast: <span class="key-badge">K</span> / Right-Click</span>
+        <span>🔥 Charge: <span class="key-badge">E</span> (Hold)</span>
+        <span>🌊 Kamehameha: <span class="key-badge">Q</span> (50 Ki)</span>
+        <span>🛡️ Guard: <span class="key-badge">F</span></span>
+      </div>
 
-      <button class="action-btn btn-kamehameha" id="btnKamehameha" onclick="handlePlayerAction('kamehameha')">
-        <span>🌊 Kamehameha!</span>
-        <span class="btn-cost">50 Ki</span>
-      </button>
+      <!-- Action Buttons -->
+      <div class="action-dock">
+        <button class="action-btn btn-melee" onclick="triggerPlayerAction('melee')">
+          <span>👊 Dragon Strike</span>
+          <span style="font-size: 11px; opacity: 0.8;">[J / Click]</span>
+        </button>
 
-      <button class="action-btn btn-guard" id="btnGuard" onclick="handlePlayerAction('guard')">
-        <span>🛡️ Instant Guard</span>
-        <span class="btn-cost">-75% Dmg</span>
-      </button>
+        <button class="action-btn btn-blast" onclick="triggerPlayerAction('blast')">
+          <span>⚡ Ki Blast</span>
+          <span style="font-size: 11px; opacity: 0.8;">[K / R-Click]</span>
+        </button>
+
+        <button class="action-btn btn-charge" id="btnCharge" onmousedown="startCharging()" onmouseup="stopCharging()" ontouchstart="startCharging()" ontouchend="stopCharging()">
+          <span>🔥 Charge Ki Aura</span>
+          <span style="font-size: 11px; opacity: 0.8;">[E Hold]</span>
+        </button>
+
+        <button class="action-btn btn-kamehameha" id="btnKamehameha" onclick="triggerPlayerAction('kamehameha')">
+          <span>🌊 Kamehameha Beam!</span>
+          <span style="font-size: 11px; color: #ffd700;">50 Ki [Q]</span>
+        </button>
+
+        <button class="action-btn btn-guard" onclick="triggerPlayerAction('guard')">
+          <span>🛡️ Instant Guard</span>
+          <span style="font-size: 11px; opacity: 0.8;">[F]</span>
+        </button>
+      </div>
     </div>
-  </section>
-
-  <!-- Battle Event Log -->
-  <div class="log-container" id="logContainer">
-    <div class="log-entry log-system">⚔️ High-Stakes Clash! The Saiyan Prince and Goku power up their combat auras!</div>
   </div>
 
   <!-- Rematch Modal -->
   <div class="modal-overlay" id="outcomeModal">
     <div class="modal-card">
       <h2 class="modal-title" id="modalTitle">GOKU WINS!</h2>
-      <p class="modal-desc" id="modalDesc">Vegeta has been overpowered by your supreme Saiyan energy!</p>
-      <button class="btn-rematch" onclick="resetBattle()">FIGHT AGAIN</button>
+      <p class="modal-desc" id="modalDesc">Victory achieved! The 3D Saiyan Battle Arena has been conquered!</p>
+      <button class="btn-rematch" onclick="resetGame()">BATTLE AGAIN</button>
     </div>
   </div>
 
-  <!-- Game Logic, Particle Engine & Web Audio Synthesizer -->
+  <!-- Game Engine Code -->
   <script>
-    // --- Canvas Ambient Particle Engine ---
-    const canvas = document.getElementById('fxCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let particleCount = 45;
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    class KiParticle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 20;
-        this.size = Math.random() * 3.5 + 1.5;
-        this.speedY = Math.random() * 2.5 + 1.2;
-        this.speedX = (Math.random() - 0.5) * 1.5;
-        this.color = Math.random() > 0.5 ? '#ffd700' : '#00f0ff';
-        this.alpha = Math.random() * 0.7 + 0.3;
-      }
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
-        this.alpha -= 0.005;
-        if (this.y < -10 || this.alpha <= 0) {
-          this.reset();
-        }
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, this.alpha);
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new KiParticle());
-    }
-
-    function surgeParticles() {
-      particles.forEach(p => {
-        p.speedY *= 2.8;
-        p.alpha = 1;
-      });
-      setTimeout(() => {
-        particles.forEach(p => p.speedY = Math.random() * 2.5 + 1.2);
-      }, 700);
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-
     // --- Web Audio Synthesizer ---
     class SoundEngine {
       constructor() {
@@ -936,14 +565,29 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(35, this.ctx.currentTime + 0.18);
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.15);
         gain.gain.setValueAtTime(0.7, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.18);
+        osc.stop(this.ctx.currentTime + 0.15);
+      }
+      playBlast() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.22);
       }
       playCharge() {
         if (!this.enabled) return;
@@ -951,14 +595,14 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(80, this.ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(380, this.ctx.currentTime + 0.45);
-        gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.45);
+        osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(360, this.ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.45);
+        osc.stop(this.ctx.currentTime + 0.3);
       }
       playBeam() {
         if (!this.enabled) return;
@@ -966,24 +610,23 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(500, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.75);
-        gain.gain.setValueAtTime(0.85, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.75);
+        osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.8);
+        gain.gain.setValueAtTime(0.9, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.8);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.75);
+        osc.stop(this.ctx.currentTime + 0.8);
       }
       playVictory() {
         if (!this.enabled) return;
         this.init();
-        const notes = [261.6, 329.6, 392.0, 523.2, 659.2];
-        notes.forEach((freq, i) => {
+        [261.6, 329.6, 392.0, 523.2, 659.2].forEach((freq, i) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0.35, this.ctx.currentTime + i * 0.12);
+          gain.gain.setValueAtTime(0.3, this.ctx.currentTime + i * 0.12);
           gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.12 + 0.3);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
@@ -992,347 +635,576 @@
         });
       }
     }
-
     const sound = new SoundEngine();
 
     function toggleAudio() {
       sound.enabled = !sound.enabled;
-      document.getElementById('btnAudio').textContent = sound.enabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+      document.getElementById('audioToggle').textContent = sound.enabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
     }
 
-    // --- Battle State Model ---
+    // --- Game State Model ---
     const gameState = {
-      player: { hp: 100, maxHp: 100, ki: 0, maxKi: 100, isGuarding: false },
-      opponent: { hp: 100, maxHp: 100, ki: 0, maxKi: 100, isGuarding: false },
-      isBusy: false,
+      player: { hp: 100, ki: 0, isGuarding: false, isCharging: false },
+      opponent: { hp: 100, ki: 0, isGuarding: false, isCharging: false },
       isGameOver: false
     };
 
-    // UI Element References
-    const gokuCard = document.getElementById('gokuCard');
-    const vegetaCard = document.getElementById('vegetaCard');
-    const gokuHpBar = document.getElementById('gokuHpBar');
-    const gokuKiBar = document.getElementById('gokuKiBar');
-    const gokuHpText = document.getElementById('gokuHpText');
-    const gokuKiText = document.getElementById('gokuKiText');
-    const gokuAura = document.getElementById('gokuAura');
-    const gokuOverdrive = document.getElementById('gokuOverdrive');
-    const gokuPower = document.getElementById('gokuPower');
+    // --- Three.js 3D Scene Initialization ---
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
 
-    const vegetaHpBar = document.getElementById('vegetaHpBar');
-    const vegetaKiBar = document.getElementById('vegetaKiBar');
-    const vegetaHpText = document.getElementById('vegetaHpText');
-    const vegetaKiText = document.getElementById('vegetaKiText');
-    const vegetaAura = document.getElementById('vegetaAura');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0c16);
+    scene.fog = new THREE.FogExp2(0x0a0c16, 0.012);
 
-    const logContainer = document.getElementById('logContainer');
-    const beamFx = document.getElementById('beamFx');
-    const outcomeModal = document.getElementById('outcomeModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDesc = document.getElementById('modalDesc');
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    const actionButtons = [
-      document.getElementById('btnPunch'),
-      document.getElementById('btnCharge'),
-      document.getElementById('btnKamehameha'),
-      document.getElementById('btnGuard')
-    ];
+    // 3D Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+    scene.add(ambientLight);
 
-    function spawnFloater(text, cardEl, type = 'damage') {
-      const floater = document.createElement('div');
-      floater.className = `combat-floater floater-${type}`;
-      floater.textContent = text;
-      cardEl.appendChild(floater);
-      setTimeout(() => floater.remove(), 850);
+    const sunLight = new THREE.DirectionalLight(0xffeedd, 0.85);
+    sunLight.position.set(30, 60, 20);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+
+    const gokuLight = new THREE.PointLight(0xffaa00, 1.2, 18);
+    scene.add(gokuLight);
+
+    const vegetaLight = new THREE.PointLight(0xaa00ff, 1.2, 18);
+    scene.add(vegetaLight);
+
+    // 3D Terrain & Wasteland Arena
+    const arenaSize = 160;
+    const groundGeo = new THREE.PlaneGeometry(arenaSize, arenaSize, 32, 32);
+    const groundMat = new THREE.MeshStandardMaterial({
+      color: 0x1f1610,
+      roughness: 0.9,
+      metalness: 0.1
+    });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Arena Energy Grid Boundary
+    const grid = new THREE.GridHelper(arenaSize, 40, 0xff5500, 0x332211);
+    grid.position.y = 0.05;
+    scene.add(grid);
+
+    // Floating Rocky Boulders
+    const boulders = [];
+    const boulderGeo = new THREE.DodecahedronGeometry(2, 1);
+    const boulderMat = new THREE.MeshStandardMaterial({ color: 0x3b2d22, roughness: 0.95 });
+
+    for (let i = 0; i < 28; i++) {
+      const boulder = new THREE.Mesh(boulderGeo, boulderMat);
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 25 + Math.random() * 50;
+      boulder.position.set(
+        Math.cos(angle) * radius,
+        3 + Math.random() * 22,
+        Math.sin(angle) * radius
+      );
+      boulder.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+      boulder.scale.setScalar(0.7 + Math.random() * 1.6);
+      scene.add(boulder);
+      boulders.push({ mesh: boulder, speed: (Math.random() - 0.5) * 0.015 });
     }
 
-    function logMessage(text, type = 'system') {
-      const entry = document.createElement('div');
-      entry.className = `log-entry log-${type}`;
-      entry.innerHTML = text;
-      logContainer.prepend(entry);
-    }
+    // --- Texture Loader for Anime Face Emblems ---
+    const texLoader = new THREE.TextureLoader();
+    const gokuTex = texLoader.load('assets/goku.jpg');
+    const vegetaTex = texLoader.load('assets/vegeta.jpg');
 
-    function triggerShake() {
-      document.body.classList.remove('screen-shake');
-      void document.body.offsetWidth;
-      document.body.classList.add('screen-shake');
-    }
+    // --- Build 3D Fighter Character Rigs ---
+    function createFighterRig(isGoku) {
+      const group = new THREE.Group();
 
-    function updateUI() {
-      // Goku stats
-      gokuHpBar.style.width = `${Math.max(0, gameState.player.hp)}%`;
-      gokuKiBar.style.width = `${gameState.player.ki}%`;
-      gokuHpText.textContent = `${Math.max(0, gameState.player.hp)} / 100`;
-      gokuKiText.textContent = `${gameState.player.ki} / 100`;
-
-      if (gameState.player.hp <= 30) {
-        gokuHpBar.classList.add('danger');
-      } else {
-        gokuHpBar.classList.remove('danger');
-      }
-
-      // Super Saiyan Overdrive check
-      if (gameState.player.ki >= 100) {
-        gokuOverdrive.classList.add('active');
-        gokuAura.classList.add('surging');
-        gokuPower.textContent = (12000 + Math.floor(Math.random() * 2000)).toLocaleString();
-      } else {
-        gokuOverdrive.classList.remove('active');
-        gokuPower.textContent = (9000 + gameState.player.ki * 25).toLocaleString();
-      }
-
-      // Vegeta stats
-      vegetaHpBar.style.width = `${Math.max(0, gameState.opponent.hp)}%`;
-      vegetaKiBar.style.width = `${gameState.opponent.ki}%`;
-      vegetaHpText.textContent = `${Math.max(0, gameState.opponent.hp)} / 100`;
-      vegetaKiText.textContent = `${gameState.opponent.ki} / 100`;
-
-      if (gameState.opponent.hp <= 30) {
-        vegetaHpBar.classList.add('danger');
-      } else {
-        vegetaHpBar.classList.remove('danger');
-      }
-
-      // Kamehameha requirement check
-      document.getElementById('btnKamehameha').disabled = gameState.player.ki < 50 || gameState.isBusy;
-    }
-
-    function setControlsDisabled(disabled) {
-      actionButtons.forEach(btn => {
-        btn.disabled = disabled;
+      // Body / Torso
+      const bodyGeo = new THREE.CylinderGeometry(0.5, 0.4, 1.4, 8);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: isGoku ? 0xff5500 : 0x1e3a8a, // Orange Gi or Blue Suit
+        roughness: 0.6
       });
-      if (!disabled) {
-        document.getElementById('btnKamehameha').disabled = gameState.player.ki < 50;
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = 1.3;
+      body.castShadow = true;
+      group.add(body);
+
+      // Chest Emblem / Armor Plate
+      const chestGeo = new THREE.BoxGeometry(0.85, 0.7, 0.65);
+      const chestMat = new THREE.MeshStandardMaterial({
+        color: isGoku ? 0xff6600 : 0xf1f5f9, // Saiyan armor plate
+        roughness: 0.4
+      });
+      const chest = new THREE.Mesh(chestGeo, chestMat);
+      chest.position.y = 1.4;
+      group.add(chest);
+
+      // Head & Anime Face Billboard
+      const headGeo = new THREE.SphereGeometry(0.42, 16, 16);
+      const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
+      const head = new THREE.Mesh(headGeo, headMat);
+      head.position.y = 2.3;
+      group.add(head);
+
+      // Textured Character Badge
+      const badgeGeo = new THREE.PlaneGeometry(0.8, 0.8);
+      const badgeMat = new THREE.MeshBasicMaterial({
+        map: isGoku ? gokuTex : vegetaTex,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+      const badge = new THREE.Mesh(badgeGeo, badgeMat);
+      badge.position.set(0, 2.3, 0.45);
+      group.add(badge);
+
+      // Spiky Saiyan Hair
+      const hairColor = isGoku ? 0xffd700 : 0x111111;
+      const hairMat = new THREE.MeshStandardMaterial({
+        color: hairColor,
+        roughness: 0.3,
+        emissive: isGoku ? 0xffaa00 : 0x220044,
+        emissiveIntensity: 0.35
+      });
+
+      const hairGroup = new THREE.Group();
+      for (let i = 0; i < 7; i++) {
+        const spikeGeo = new THREE.ConeGeometry(0.2, 0.85, 5);
+        const spike = new THREE.Mesh(spikeGeo, hairMat);
+        spike.position.set(
+          (Math.random() - 0.5) * 0.5,
+          2.6 + Math.random() * 0.3,
+          (Math.random() - 0.5) * 0.4
+        );
+        spike.rotation.set((Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8);
+        hairGroup.add(spike);
       }
+      group.add(hairGroup);
+
+      // Volumetric Ki Energy Aura Sphere
+      const auraGeo = new THREE.SphereGeometry(1.6, 16, 16);
+      const auraMat = new THREE.MeshBasicMaterial({
+        color: isGoku ? 0xffd700 : 0xa855f7,
+        transparent: true,
+        opacity: 0.25,
+        wireframe: true
+      });
+      const aura = new THREE.Mesh(auraGeo, auraMat);
+      aura.position.y = 1.6;
+      group.add(aura);
+
+      // Floating World-Space Health Bar
+      const hpBarGeo = new THREE.PlaneGeometry(2.2, 0.22);
+      const hpBarMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
+      const hpBar = new THREE.Mesh(hpBarGeo, hpBarMat);
+      hpBar.position.set(0, 3.4, 0);
+      group.add(hpBar);
+
+      return { group, aura, hpBar, hairGroup };
     }
 
-    // --- Player Action Handler ---
-    function handlePlayerAction(action) {
-      if (gameState.isBusy || gameState.isGameOver) return;
+    const gokuRig = createFighterRig(true);
+    gokuRig.group.position.set(0, 0, 15);
+    scene.add(gokuRig.group);
+
+    const vegetaRig = createFighterRig(false);
+    vegetaRig.group.position.set(0, 0, -15);
+    scene.add(vegetaRig.group);
+
+    // --- Real-Time 3D Projectiles System ---
+    const projectiles = [];
+
+    function spawnKiBlast(startPos, targetPos, isGoku) {
+      sound.playBlast();
+      const color = isGoku ? 0x00f0ff : 0xffdd00;
+      const geo = new THREE.SphereGeometry(0.4, 12, 12);
+      const mat = new THREE.MeshBasicMaterial({ color: color });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.copy(startPos);
+      scene.add(mesh);
+
+      const dir = new THREE.Vector3().subVectors(targetPos, startPos).normalize();
+      projectiles.push({
+        mesh,
+        dir,
+        speed: 45,
+        isGoku,
+        damage: 10,
+        type: 'blast',
+        life: 2.5
+      });
+    }
+
+    // 3D Kamehameha / Final Flash Beam Cylinder
+    let activeBeam = null;
+
+    function fireBeam3D(isGoku) {
+      sound.playBeam();
+      showToast(isGoku ? "KA-ME-HA-ME-HA!!" : "FINAL FLASH!!");
+
+      const start = isGoku ? gokuRig.group.position : vegetaRig.group.position;
+      const target = isGoku ? vegetaRig.group.position : gokuRig.group.position;
+      const length = start.distanceTo(target) + 15;
+
+      const beamGeo = new THREE.CylinderGeometry(1.2, 1.2, length, 16);
+      const beamMat = new THREE.MeshBasicMaterial({
+        color: isGoku ? 0x00f0ff : 0xffea00,
+        transparent: true,
+        opacity: 0.85
+      });
+      const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+
+      // Orient cylinder between start and target
+      const midPoint = new THREE.Vector3().addVectors(start, target).multiplyScalar(0.5);
+      beamMesh.position.copy(midPoint);
+      beamMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3().subVectors(target, start).normalize());
+      scene.add(beamMesh);
+
+      activeBeam = {
+        mesh: beamMesh,
+        isGoku,
+        life: 0.65,
+        damage: 40
+      };
+
+      // Apply damage immediately if aligned
+      if (isGoku) {
+        let dmg = 40;
+        if (gameState.opponent.isGuarding) dmg *= 0.25;
+        gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
+      } else {
+        let dmg = 35;
+        if (gameState.player.isGuarding) dmg *= 0.25;
+        gameState.player.hp = Math.max(0, gameState.player.hp - dmg);
+      }
+      updateHUD();
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('eventToast');
+      toast.textContent = text;
+      toast.classList.remove('active');
+      void toast.offsetWidth;
+      toast.classList.add('active');
+    }
+
+    // --- Input Keyboard Tracking for 3D Movement ---
+    const keys = {
+      w: false, a: false, s: false, d: false,
+      space: false, shift: false,
+      e: false
+    };
+
+    window.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (key in keys) keys[key] = true;
+      if (key === ' ') keys.space = true;
+      if (key === 'shift') keys.shift = true;
+
+      // Combat Hotkeys
+      if (key === 'j') triggerPlayerAction('melee');
+      if (key === 'k') triggerPlayerAction('blast');
+      if (key === 'q') triggerPlayerAction('kamehameha');
+      if (key === 'f') triggerPlayerAction('guard');
+      if (key === 'e') startCharging();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      const key = e.key.toLowerCase();
+      if (key in keys) keys[key] = false;
+      if (key === ' ') keys.space = false;
+      if (key === 'shift') keys.shift = false;
+      if (key === 'e') stopCharging();
+    });
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      if (e.button === 0) triggerPlayerAction('melee');
+      if (e.button === 2) triggerPlayerAction('blast');
+    });
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- Combat Action Triggers ---
+    function startCharging() {
+      if (gameState.isGameOver) return;
+      gameState.player.isCharging = true;
+      gokuRig.aura.material.opacity = 0.85;
+      showToast("CHARGING KI AURA!");
+    }
+
+    function stopCharging() {
+      gameState.player.isCharging = false;
+      gokuRig.aura.material.opacity = 0.25;
+    }
+
+    function triggerPlayerAction(action) {
+      if (gameState.isGameOver) return;
 
       gameState.player.isGuarding = false;
-      const isOverdrive = gameState.player.ki >= 100;
-      const dmgMultiplier = isOverdrive ? 1.25 : 1.0;
 
       switch(action) {
-        case 'punch':
+        case 'melee':
           sound.playPunch();
-          triggerShake();
-          gokuCard.classList.remove('lunge-right');
-          void gokuCard.offsetWidth;
-          gokuCard.classList.add('lunge-right');
+          // High speed dash toward Vegeta
+          const dashTarget = vegetaRig.group.position.clone();
+          gokuRig.group.position.lerp(dashTarget, 0.45);
+          showToast("DRAGON STRIKE!");
 
-          vegetaCard.classList.remove('hit-recoil');
-          void vegetaCard.offsetWidth;
-          vegetaCard.classList.add('hit-recoil');
-
-          let punchDmg = Math.round(10 * dmgMultiplier);
-          if (gameState.opponent.isGuarding) {
-            punchDmg = Math.round(punchDmg * 0.25);
-            spawnFloater(`-${punchDmg}`, vegetaCard, 'guard');
-            logMessage(`🛡️ Vegeta guarded! Goku's punch dealt only <b>${punchDmg}</b> damage!`, 'goku');
-          } else {
-            spawnFloater(`-${punchDmg}`, vegetaCard, 'damage');
-            logMessage(`👊 Goku lunges with a Dragon Punch! <b>${punchDmg}</b> damage to Vegeta!`, 'goku');
+          // Deal damage if close
+          if (gokuRig.group.position.distanceTo(vegetaRig.group.position) < 8) {
+            let dmg = 12;
+            if (gameState.opponent.isGuarding) dmg = 3;
+            gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
+            gameState.player.ki = Math.min(100, gameState.player.ki + 15);
           }
-          gameState.opponent.hp = Math.max(0, gameState.opponent.hp - punchDmg);
-          gameState.player.ki = Math.min(100, gameState.player.ki + 15);
-          spawnFloater(`+15 KI`, gokuCard, 'ki');
           break;
 
-        case 'charge':
-          sound.playCharge();
-          surgeParticles();
-          gokuAura.classList.add('surging');
-          triggerShake();
-          gameState.player.ki = Math.min(100, gameState.player.ki + 30);
-          spawnFloater(`+30 KI`, gokuCard, 'ki');
-          logMessage(`⚡ <i>"HAAAAAA!"</i> Goku powers up his golden Ki! (+30 Ki, current: ${gameState.player.ki})`, 'goku');
-          setTimeout(() => {
-            if (gameState.player.ki < 100) gokuAura.classList.remove('surging');
-          }, 650);
+        case 'blast':
+          const start = gokuRig.group.position.clone().add(new THREE.Vector3(0, 1.5, -1));
+          const target = vegetaRig.group.position.clone().add(new THREE.Vector3(0, 1.5, 0));
+          spawnKiBlast(start, target, true);
+          gameState.player.ki = Math.min(100, gameState.player.ki + 5);
           break;
 
         case 'kamehameha':
-          if (gameState.player.ki < 50) return;
-          gameState.player.ki -= 50;
-          sound.playBeam();
-          surgeParticles();
-          triggerShake();
-          gokuPower.textContent = "35,000!!";
-
-          beamFx.className = 'beam-fx beam-kamehameha';
-          beamFx.style.opacity = '1';
-
-          vegetaCard.classList.remove('hit-recoil');
-          void vegetaCard.offsetWidth;
-          vegetaCard.classList.add('hit-recoil');
-
-          let beamDmg = Math.round(40 * dmgMultiplier);
-          if (gameState.opponent.isGuarding) {
-            beamDmg = Math.round(beamDmg * 0.25);
-            spawnFloater(`-${beamDmg}`, vegetaCard, 'guard');
-            logMessage(`🌊 <b>KA-ME-HA-ME-HA!</b> Vegeta braced for impact! Dealt <b>${beamDmg}</b> damage!`, 'goku');
-          } else {
-            spawnFloater(`-${beamDmg} CRITICAL!`, vegetaCard, 'crit');
-            logMessage(`🌊 <b>KA-ME-HA-ME-HA!</b> A colossal blue energy wave engulfs Vegeta for <b>${beamDmg}</b> DAMAGE!`, 'goku');
+          if (gameState.player.ki < 50) {
+            showToast("NEED 50 KI FOR KAMEHAMEHA!");
+            return;
           }
-          gameState.opponent.hp = Math.max(0, gameState.opponent.hp - beamDmg);
-          setTimeout(() => beamFx.style.opacity = '0', 550);
+          gameState.player.ki -= 50;
+          fireBeam3D(true);
           break;
 
         case 'guard':
           gameState.player.isGuarding = true;
-          spawnFloater(`GUARD ACTIVE`, gokuCard, 'guard');
-          logMessage(`🛡️ Goku takes an Instant Guard stance! Damage on next hit reduced by 75%!`, 'goku');
+          showToast("INSTANT GUARD ACTIVE!");
           break;
       }
 
-      updateUI();
-
-      if (gameState.opponent.hp <= 0) {
-        concludeBattle(true);
-        return;
-      }
-
-      // Opponent Turn
-      gameState.isBusy = true;
-      setControlsDisabled(true);
-
-      setTimeout(() => {
-        executeVegetaTurn();
-      }, 750);
+      updateHUD();
+      checkWinCondition();
     }
 
-    // --- Opponent AI Turn ---
-    function executeVegetaTurn() {
+    // --- Opponent 3D AI Routine ---
+    let aiTimer = 0;
+
+    function updateVegetaAI(delta) {
       if (gameState.isGameOver) return;
 
-      gameState.opponent.isGuarding = false;
+      aiTimer += delta;
 
-      if (gameState.opponent.ki >= 50 && Math.random() > 0.3) {
-        // Final Flash
-        gameState.opponent.ki -= 50;
-        sound.playBeam();
-        surgeParticles();
-        triggerShake();
+      // Circle & Strafe around Goku in 3D
+      const gokuPos = gokuRig.group.position;
+      const vegPos = vegetaRig.group.position;
 
-        beamFx.className = 'beam-fx beam-finalflash';
-        beamFx.style.opacity = '1';
+      // Maintain hovering combat altitude
+      vegPos.y = THREE.MathUtils.lerp(vegPos.y, gokuPos.y + Math.sin(Date.now() * 0.002) * 2, 0.05);
 
-        gokuCard.classList.remove('hit-recoil');
-        void gokuCard.offsetWidth;
-        gokuCard.classList.add('hit-recoil');
-
-        let blastDmg = 35;
-        if (gameState.player.isGuarding) {
-          blastDmg = Math.round(blastDmg * 0.25);
-          spawnFloater(`-${blastDmg}`, gokuCard, 'guard');
-          logMessage(`👑 <i>"FINAL FLASH!"</i> Goku guarded! Took only <b>${blastDmg}</b> damage!`, 'vegeta');
-        } else {
-          spawnFloater(`-${blastDmg} CRITICAL!`, gokuCard, 'crit');
-          logMessage(`👑 <i>"FINAL FLASH!"</i> Vegeta releases devastating yellow destruction! <b>${blastDmg}</b> DAMAGE!`, 'vegeta');
-        }
-        gameState.player.hp = Math.max(0, gameState.player.hp - blastDmg);
-        setTimeout(() => beamFx.style.opacity = '0', 550);
-
-      } else if (gameState.opponent.ki < 40 && Math.random() > 0.45) {
-        // Charge Ki
-        sound.playCharge();
-        surgeParticles();
-        vegetaAura.classList.add('surging');
-        triggerShake();
-        gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 30);
-        spawnFloater(`+30 KI`, vegetaCard, 'ki');
-        logMessage(`👑 Vegeta powers up: <i>"Bow before the Saiyan Prince!"</i> (+30 Ki)`, 'vegeta');
-        setTimeout(() => vegetaAura.classList.remove('surging'), 650);
-
-      } else if (Math.random() > 0.75 && !gameState.opponent.isGuarding) {
-        // Guard
-        gameState.opponent.isGuarding = true;
-        spawnFloater(`GUARD ACTIVE`, vegetaCard, 'guard');
-        logMessage(`👑 Vegeta crosses his arms in royal defensive posture!`, 'vegeta');
-
-      } else {
-        // Regular Melee
-        sound.playPunch();
-        triggerShake();
-        vegetaCard.classList.remove('lunge-left');
-        void vegetaCard.offsetWidth;
-        vegetaCard.classList.add('lunge-left');
-
-        gokuCard.classList.remove('hit-recoil');
-        void gokuCard.offsetWidth;
-        gokuCard.classList.add('hit-recoil');
-
-        let dmg = 12;
-        if (gameState.player.isGuarding) {
-          dmg = Math.round(dmg * 0.25);
-          spawnFloater(`-${dmg}`, gokuCard, 'guard');
-          logMessage(`👑 Vegeta delivers a savage kick! Blocked! Goku takes only <b>${dmg}</b> damage!`, 'vegeta');
-        } else {
-          spawnFloater(`-${dmg}`, gokuCard, 'damage');
-          logMessage(`👑 Vegeta strikes with a savage kick for <b>${dmg}</b> damage!`, 'vegeta');
-        }
-        gameState.player.hp = Math.max(0, gameState.player.hp - dmg);
-        gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 15);
-        spawnFloater(`+15 KI`, vegetaCard, 'ki');
+      // Keep distance around 18 units
+      const dist = vegPos.distanceTo(gokuPos);
+      if (dist < 12) {
+        vegPos.z -= 6 * delta;
+      } else if (dist > 25) {
+        vegPos.z += 8 * delta;
       }
 
-      updateUI();
+      // Strafe sideways
+      vegPos.x += Math.cos(Date.now() * 0.0015) * 5 * delta;
 
-      if (gameState.player.hp <= 0) {
-        concludeBattle(false);
-      } else {
-        gameState.isBusy = false;
-        setControlsDisabled(false);
+      // AI Decision Cycle every 1.5 seconds
+      if (aiTimer > 1.4) {
+        aiTimer = 0;
+
+        if (gameState.opponent.ki >= 50 && Math.random() > 0.4) {
+          // Final Flash
+          gameState.opponent.ki -= 50;
+          fireBeam3D(false);
+        } else if (gameState.opponent.ki < 40 && Math.random() > 0.4) {
+          // Power up
+          sound.playCharge();
+          gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 25);
+          vegetaRig.aura.material.opacity = 0.8;
+          setTimeout(() => vegetaRig.aura.material.opacity = 0.25, 600);
+        } else {
+          // Rapid Ki Blast
+          const start = vegPos.clone().add(new THREE.Vector3(0, 1.5, 1));
+          const target = gokuPos.clone().add(new THREE.Vector3(0, 1.5, 0));
+          spawnKiBlast(start, target, false);
+          gameState.opponent.ki = Math.min(100, gameState.opponent.ki + 8);
+        }
+
+        updateHUD();
+        checkWinCondition();
       }
     }
 
-    // --- Battle Conclusion ---
-    function concludeBattle(playerWon) {
-      gameState.isGameOver = true;
-      gameState.isBusy = true;
-      setControlsDisabled(true);
+    // --- HUD Update ---
+    function updateHUD() {
+      document.getElementById('gokuHpBar').style.width = `${Math.max(0, gameState.player.hp)}%`;
+      document.getElementById('gokuKiBar').style.width = `${gameState.player.ki}%`;
+      document.getElementById('vegetaHpBar').style.width = `${Math.max(0, gameState.opponent.hp)}%`;
+      document.getElementById('vegetaKiBar').style.width = `${gameState.opponent.ki}%`;
 
-      setTimeout(() => {
-        if (playerWon) {
-          sound.playVictory();
-          modalTitle.textContent = "GOKU WINS!";
-          modalTitle.className = "modal-title win-text";
-          modalDesc.textContent = "Earth is saved! Vegeta acknowledges your supreme Super Saiyan mastery!";
-        } else {
-          modalTitle.textContent = "VEGETA WINS!";
-          modalTitle.className = "modal-title lose-text";
-          modalDesc.textContent = "Defeat! The Saiyan Prince proves his royal lineage is supreme!";
-        }
-        outcomeModal.classList.add('active');
-      }, 550);
+      document.getElementById('btnKamehameha').disabled = gameState.player.ki < 50;
+
+      // Power Level Dynamics
+      document.getElementById('gokuPower').textContent = `PWR: ${(9000 + gameState.player.ki * 30).toLocaleString()}`;
+      document.getElementById('vegetaPower').textContent = `PWR: ${(8800 + gameState.opponent.ki * 28).toLocaleString()}`;
+
+      // Update 3D Floating Health Bars
+      gokuRig.hpBar.scale.x = Math.max(0.001, gameState.player.hp / 100);
+      vegetaRig.hpBar.scale.x = Math.max(0.001, gameState.opponent.hp / 100);
     }
 
-    function resetBattle() {
+    function checkWinCondition() {
+      if (gameState.isGameOver) return;
+
+      if (gameState.opponent.hp <= 0) {
+        gameState.isGameOver = true;
+        sound.playVictory();
+        document.getElementById('modalTitle').textContent = "GOKU WINS!";
+        document.getElementById('modalTitle').className = "modal-title win-text";
+        document.getElementById('modalDesc').textContent = "Earth is safe! Vegeta was vanquished in the 3D Arena!";
+        document.getElementById('outcomeModal').classList.add('active');
+      } else if (gameState.player.hp <= 0) {
+        gameState.isGameOver = true;
+        document.getElementById('modalTitle').textContent = "VEGETA WINS!";
+        document.getElementById('modalTitle').className = "modal-title lose-text";
+        document.getElementById('modalDesc').textContent = "Defeat! The Saiyan Prince conquered the 3D Arena!";
+        document.getElementById('outcomeModal').classList.add('active');
+      }
+    }
+
+    function resetGame() {
       gameState.player.hp = 100;
       gameState.player.ki = 0;
-      gameState.player.isGuarding = false;
-
       gameState.opponent.hp = 100;
       gameState.opponent.ki = 0;
-      gameState.opponent.isGuarding = false;
-
-      gameState.isBusy = false;
       gameState.isGameOver = false;
 
-      outcomeModal.classList.remove('active');
-      logContainer.innerHTML = '';
-      logMessage(`⚔️ Rematch initialized! Both Saiyans take their legendary battle stances!`, 'system');
+      gokuRig.group.position.set(0, 0, 15);
+      vegetaRig.group.position.set(0, 0, -15);
 
-      updateUI();
-      setControlsDisabled(false);
+      document.getElementById('outcomeModal').classList.remove('active');
+      updateHUD();
+      showToast("3D REMATCH BEGINS!");
     }
 
-    // Initialize UI on load
-    updateUI();
+    // --- Main 60FPS Game Loop ---
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+
+      // Continuous Ki Charging while holding E / Button
+      if (gameState.player.isCharging && !gameState.isGameOver) {
+        sound.playCharge();
+        gameState.player.ki = Math.min(100, gameState.player.ki + 40 * delta);
+        updateHUD();
+      }
+
+      // 3D Player Movement (WASD + Space/Shift Flight)
+      const moveSpeed = 16 * delta;
+      if (keys.w) gokuRig.group.position.z -= moveSpeed;
+      if (keys.s) gokuRig.group.position.z += moveSpeed;
+      if (keys.a) gokuRig.group.position.x -= moveSpeed;
+      if (keys.d) gokuRig.group.position.x += moveSpeed;
+      if (keys.space) gokuRig.group.position.y += moveSpeed * 1.2;
+      if (keys.shift) gokuRig.group.position.y = Math.max(0, gokuRig.group.position.y - moveSpeed * 1.2);
+
+      // Boundary clamp
+      gokuRig.group.position.x = THREE.MathUtils.clamp(gokuRig.group.position.x, -55, 55);
+      gokuRig.group.position.z = THREE.MathUtils.clamp(gokuRig.group.position.z, -55, 55);
+      gokuRig.group.position.y = THREE.MathUtils.clamp(gokuRig.group.position.y, 0, 30);
+
+      // Lights follow characters
+      gokuLight.position.copy(gokuRig.group.position).add(new THREE.Vector3(0, 2, 0));
+      vegetaLight.position.copy(vegetaRig.group.position).add(new THREE.Vector3(0, 2, 0));
+
+      // Make 3D characters face each other
+      gokuRig.group.lookAt(vegetaRig.group.position.x, gokuRig.group.position.y, vegetaRig.group.position.z);
+      vegetaRig.group.lookAt(gokuRig.group.position.x, vegetaRig.group.position.y, gokuRig.group.position.z);
+
+      // Rotate floating boulders
+      boulders.forEach(b => {
+        b.mesh.rotation.x += b.speed;
+        b.mesh.rotation.y += b.speed * 1.5;
+      });
+
+      // Update Opponent AI
+      updateVegetaAI(delta);
+
+      // Projectiles update & collision checks
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const p = projectiles[i];
+        p.mesh.position.addScaledVector(p.dir, p.speed * delta);
+        p.life -= delta;
+
+        // Collision detection
+        const targetGroup = p.isGoku ? vegetaRig.group : gokuRig.group;
+        if (p.mesh.position.distanceTo(targetGroup.position.clone().add(new THREE.Vector3(0, 1.5, 0))) < 2.5) {
+          sound.playPunch();
+          if (p.isGoku) {
+            let dmg = p.damage;
+            if (gameState.opponent.isGuarding) dmg *= 0.25;
+            gameState.opponent.hp = Math.max(0, gameState.opponent.hp - dmg);
+          } else {
+            let dmg = p.damage;
+            if (gameState.player.isGuarding) dmg *= 0.25;
+            gameState.player.hp = Math.max(0, gameState.player.hp - dmg);
+          }
+          scene.remove(p.mesh);
+          projectiles.splice(i, 1);
+          updateHUD();
+          checkWinCondition();
+          continue;
+        }
+
+        if (p.life <= 0) {
+          scene.remove(p.mesh);
+          projectiles.splice(i, 1);
+        }
+      }
+
+      // Active Beam timer
+      if (activeBeam) {
+        activeBeam.life -= delta;
+        activeBeam.mesh.rotation.z += 10 * delta;
+        if (activeBeam.life <= 0) {
+          scene.remove(activeBeam.mesh);
+          activeBeam = null;
+        }
+      }
+
+      // Third-Person 3D Chase Camera locked onto target
+      const gokuPos = gokuRig.group.position;
+      const vegPos = vegetaRig.group.position;
+
+      // Position camera behind Goku along the line from Vegeta to Goku
+      const camDir = new THREE.Vector3().subVectors(gokuPos, vegPos).normalize();
+      const idealCamPos = gokuPos.clone().addScaledVector(camDir, 9).add(new THREE.Vector3(0, 3.8, 0));
+      camera.position.lerp(idealCamPos, 0.12);
+      camera.lookAt(vegPos.x, vegPos.y + 1.2, vegPos.z);
+
+      renderer.render(scene, camera);
+    }
+
+    // Window resize handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start 3D Loop
+    animate();
+    updateHUD();
   </script>
 </body>
 </html>
