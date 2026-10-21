@@ -81,13 +81,14 @@ SPECS/
     ├── config.yaml                                   # OpenSpec configuration profile
     ├── specs/                                        # Permanent Living Specifications (Source of Truth)
     │   └── battle-arena/
-    │       └── spec.md                               # Living battle-arena spec (19 testable requirements!)
+    │       └── spec.md                               # Living battle-arena spec (23 testable requirements!)
     └── changes/                                      # Change proposals
         └── archive/                                  # Audit trail of completed changes
             ├── 2026-10-19-dbz-battle-game/           # Change 1: 2D turn-based arena (7 reqs)
             ├── 2026-10-20-enhance-game-frontend/     # Change 2: Scouter HUD & anime art (11 reqs)
             ├── 2026-10-20-3d-battle-arena/           # Change 3: Three.js 3D spatial flight (15 reqs)
-            └── 2026-10-20-budokai-tenkaichi-3-mode/  # Change 4: Budokai Tenkaichi 3 HUD & combat (19 reqs)
+            ├── 2026-10-20-budokai-tenkaichi-3-mode/  # Change 4: Budokai Tenkaichi 3 HUD & combat (19 reqs)
+            └── 2026-10-21-polish-bt3-frontend/       # Change 5: Scouter radar, camera modes & input glow (23 reqs)
 ```
 
 ---
@@ -98,14 +99,15 @@ SPECS/
 | :--- | :--- | :--- |
 | **3D Strafe & Move** | `W`, `A`, `S`, `D` | Move along X/Z plane in 3D canyon arena |
 | **Dragon Dash** | `Shift + WASD` | Supersonic flight burst with conical shockwave aura |
-| **Vertical Flight** | `Space` / `C` | Ascend / Descend elevation in 3D air space |
+| **Vertical Flight** | `Space` | Ascend elevation in 3D air space |
 | **Z-Vanish Teleport** | `V` | Instant transmission directly behind opponent's back |
 | **Rush Melee Combo** | `J` / Left-Click | 4-Hit strike chain ending in explosive knockback kick |
 | **Ki Energy Blast** | `K` / Right-Click | Rapid 3D homing energy orbs with impact sparks |
 | **Power Charge** | `E` (Hold) | Surge Ki aura; unlocks **Sparking! Mode** at max Ki |
-| **Kamehameha** | `Q` | Massive 3D energy beam dealing 40 damage |
-| **Defensive Guard** | `F` | Saiyan energy barrier absorbing 75% incoming damage |
-| **Explosive Wave** | `B` | 360-degree shockwave blast repelling nearby attacks |
+| **Kamehameha** | `Q` | Massive 3D energy beam dealing 85 damage |
+| **Explosive Wave** | `B` | 360-degree shockwave blast repelling nearby threats |
+| **Camera View** | `C` | Cycle between Chase, Close Action, and Wide Panoramic cameras |
+| **Cinematic Mode** | `H` | Toggle HUD on / off for immersive screenshots and battles |
 
 ---
 
@@ -147,6 +149,7 @@ All conceptual learnings and hands-on milestones are formatted for easy copy-pas
 - **Note 6:** Real-World Hands-On Case Study: Building the DBZ Game
 - **Note 7:** The 3D Spatial Evolution — Full Real-Time Movement
 - **Note 8:** The Dragon Ball Z: Budokai Tenkaichi 3 (BT3) Transformation
+- **Note 9:** Frontend Polish, Scouter Radar & 23 Living Specs
 
 ---
 

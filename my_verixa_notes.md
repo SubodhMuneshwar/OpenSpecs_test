@@ -150,5 +150,30 @@ When I run `/opsx:propose`, OpenSpec creates a folder: `openspec/changes/<featur
   - Executed change `budokai-tenkaichi-3-mode` following Anand Subramani's workflow.
   - The living specification (`openspec/specs/battle-arena/spec.md`) has grown organically from 7 to 11 to 15, and now **19 fully validated requirements**, proving how OpenSpec accommodates rapid feature iteration without code rot!
 
+---
+
+## 📝 Note 9: Frontend Polish, Scouter Radar & 23 Living Specs
+
+### What I Learned & Implemented:
+- **Authentic Scouter Radar Mini-Map:**
+  - 120x120px circular canvas in the bottom-left corner with glowing emerald/cyan neon rings and rotating sweep animation.
+  - Plots Goku (cyan dot) and Vegeta (red dot) in real-time 3D coordinates.
+  - Features vertical elevation disparity indicators ($\blacktriangle$ when opponent is above, $\blacktriangledown$ when below, and dot when level).
+  - Displays real-time numeric radar distance readout (`RADAR: 24.5m`).
+- **Interactive Keyboard Input Highlighting:**
+  - Every bound key in the `.controls-legend` (`W, A, S, D, Shift, Space, J, V, K, E, Q, B, C, H`) pulses with an energetic gold/orange glow on physical keypress.
+- **Dynamic 3D Camera Modes:**
+  - Cycle between 3 camera perspectives via `C` key or header button:
+    1. **CHASE:** Standard BT3 over-the-shoulder chase camera.
+    2. **CLOSE:** Close action camera for intense rush-sequence feeling.
+    3. **WIDE:** Panoramic orbital viewpoint showcasing the full 3D canyon arena.
+- **Cinematic Immersion Mode:**
+  - Press `H` or click header button to toggle all HUD overlays on/off for clean cinematics.
+- **Sparking! Mode Vignette:**
+  - Full-screen golden fiery energy border that pulses around the screen edges when Sparking! Mode is active.
+- **Living Spec Milestone:**
+  - Archived change `polish-bt3-frontend`, expanding the living specification (`battle-arena`) to **23 validated requirements**!
+
+
 
 

@@ -261,7 +261,7 @@
       to { transform: scale(1.06); }
     }
 
-    /* Central BT3 Logo Header */
+    /* Central BT3 Logo Header & Controls */
     .bt3-center-brand {
       display: flex;
       flex-direction: column;
@@ -274,17 +274,123 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
+    .header-btn-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
     .audio-btn {
       pointer-events: auto;
-      margin-top: 4px;
       background: #1e293b;
       border: 1px solid #ffd700;
       color: #ffd700;
       font-family: 'Orbitron', sans-serif;
       font-size: 10px;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 6px;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .audio-btn:hover {
+      background: #ffd700;
+      color: #000000;
+      box-shadow: 0 0 12px #ffd700;
+    }
+
+    /* Scouter Mini-Map Radar */
+    .radar-container {
+      position: absolute;
+      bottom: 22px;
+      left: 22px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(0, 30, 20, 0.85) 0%, rgba(2, 10, 15, 0.95) 100%);
+      border: 2px solid #00ffaa;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0, 255, 170, 0.4), inset 0 0 15px rgba(0, 255, 170, 0.3);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 15;
+    }
+
+    #scouterRadar {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .radar-dist-tag {
+      position: absolute;
+      bottom: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 8px;
+      font-weight: 900;
+      color: #00ffaa;
+      background: rgba(0,0,0,0.7);
+      padding: 1px 4px;
+      border-radius: 3px;
+      text-shadow: 0 0 5px #00ffaa;
+    }
+
+    /* Sparking Fullscreen Vignette */
+    .sparking-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      box-shadow: inset 0 0 80px rgba(255, 204, 0, 0.7), inset 0 0 160px rgba(255, 85, 0, 0.5);
+    }
+
+    .sparking-vignette.active {
+      opacity: 1;
+      animation: vignetteSurge 0.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes vignetteSurge {
+      0% { box-shadow: inset 0 0 60px rgba(255, 204, 0, 0.5), inset 0 0 120px rgba(255, 85, 0, 0.3); }
+      100% { box-shadow: inset 0 0 110px rgba(255, 230, 0, 0.9), inset 0 0 220px rgba(255, 60, 0, 0.7); }
+    }
+
+    /* Cinematic HUD Mode */
+    .hud-layer {
+      transition: opacity 0.35s ease;
+    }
+
+    .hud-layer.hud-hidden > *:not(#hudRestoreBtn) {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .hud-restore-btn {
+      display: none;
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      background: rgba(10, 14, 26, 0.9);
+      border: 1px solid #ffcc00;
+      color: #ffcc00;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 999;
+      pointer-events: auto;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+    }
+
+    .hud-layer.hud-hidden #hudRestoreBtn {
+      display: block !important;
     }
 
     /* BT3 Targeting Reticle with Range in Meters */
@@ -430,6 +536,16 @@
       border-radius: 4px;
       border: 1px solid rgba(255, 204, 0, 0.5);
       font-weight: 900;
+      display: inline-block;
+      transition: all 0.1s ease;
+    }
+
+    .badge-key.key-active {
+      background: #ffcc00 !important;
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 16px #ffd700, 0 0 30px #ff5500 !important;
+      transform: scale(1.22);
     }
 
     .action-row {
@@ -546,9 +662,15 @@
   <!-- WebGL 3D Canvas -->
   <canvas id="webgl-canvas"></canvas>
 
+  <!-- Sparking Mode Fullscreen Edge Glow -->
+  <div class="sparking-vignette" id="sparkingVignette"></div>
+
   <!-- HUD Interface Layer -->
-  <div class="hud-layer">
+  <div class="hud-layer" id="hudOverlay">
     
+    <!-- Restore HUD Floating Button (Shown when HUD hidden) -->
+    <button class="hud-restore-btn" id="hudRestoreBtn" onclick="toggleHUD()">👁️ SHOW HUD [H]</button>
+
     <!-- Top BT3 HUD Bar -->
     <div class="bt3-top-hud">
       
@@ -580,10 +702,14 @@
         </div>
       </div>
 
-      <!-- Center Logo & Sound Toggle -->
+      <!-- Center Logo & Feature Controls -->
       <div class="bt3-center-brand">
         <div style="font-family: 'Bungee'; font-size: 18px; color: #ffcc00; text-shadow: 0 0 10px #ff5500;">BUDOKAI TENKAICHI 3</div>
-        <button class="audio-btn" id="audioToggle" onclick="toggleAudio()">🔊 BGM & SFX: ON</button>
+        <div class="header-btn-row">
+          <button class="audio-btn" id="audioToggle" onclick="toggleAudio()">🔊 BGM: ON</button>
+          <button class="audio-btn" id="camToggle" onclick="cycleCameraMode()">🎥 CAM: CHASE [C]</button>
+          <button class="audio-btn" id="hudToggle" onclick="toggleHUD()">👁️ HUD: ON [H]</button>
+        </div>
       </div>
 
       <!-- Vegeta BT3 Status Box -->
@@ -629,18 +755,26 @@
     <!-- Anime Event Toast -->
     <div class="anime-toast" id="animeToast">VANISH!</div>
 
+    <!-- Scouter Mini-Map Radar -->
+    <div class="radar-container" id="radarContainer">
+      <canvas id="scouterRadar" width="120" height="120"></canvas>
+      <div class="radar-dist-tag" id="radarDistTag">RADAR: 24m</div>
+    </div>
+
     <!-- Bottom BT3 Legend & Action Dock -->
     <div class="bottom-dock">
       <div class="controls-legend">
-        <span>🏃 Move: <span class="badge-key">W</span> <span class="badge-key">A</span> <span class="badge-key">S</span> <span class="badge-key">D</span></span>
-        <span>🚀 Dragon Dash: <span class="badge-key">SHIFT + MOVE</span></span>
-        <span>☁️ Fly Up: <span class="badge-key">SPACE</span></span>
-        <span>👊 Rush Combo: <span class="badge-key">J / Click</span></span>
-        <span>💨 Z-Vanish: <span class="badge-key">V</span></span>
-        <span>⚡ Ki Blast: <span class="badge-key">K</span></span>
-        <span>🔥 Charge: <span class="badge-key">E (Hold)</span></span>
-        <span>🌊 Kamehameha: <span class="badge-key">Q</span></span>
-        <span>💥 Explosive Wave: <span class="badge-key">B</span></span>
+        <span>🏃 Move: <span class="badge-key" data-key="w">W</span> <span class="badge-key" data-key="a">A</span> <span class="badge-key" data-key="s">S</span> <span class="badge-key" data-key="d">D</span></span>
+        <span>🚀 Dragon Dash: <span class="badge-key" data-key="shift">SHIFT</span></span>
+        <span>☁️ Fly Up: <span class="badge-key" data-key="space">SPACE</span></span>
+        <span>👊 Rush: <span class="badge-key" data-key="j">J / Click</span></span>
+        <span>💨 Vanish: <span class="badge-key" data-key="v">V</span></span>
+        <span>⚡ Blast: <span class="badge-key" data-key="k">K / R-Click</span></span>
+        <span>🔥 Charge: <span class="badge-key" data-key="e">E (Hold)</span></span>
+        <span>🌊 Kamehameha: <span class="badge-key" data-key="q">Q</span></span>
+        <span>💥 Explosive Wave: <span class="badge-key" data-key="b">B</span></span>
+        <span>🎥 Camera: <span class="badge-key" data-key="c">C</span></span>
+        <span>👁️ HUD: <span class="badge-key" data-key="h">H</span></span>
       </div>
 
       <div class="action-row">
@@ -672,6 +806,11 @@
         <button class="btn-bt3 btn-kamehameha" id="btnKamehameha" onclick="triggerKamehameha()">
           <span>🌊 Kamehameha!</span>
           <span style="font-size: 11px; color: #ffd700;">[Q]</span>
+        </button>
+
+        <button class="btn-bt3 btn-blast" style="border-color: #f43f5e;" onclick="triggerExplosiveWave()">
+          <span>💥 Explosive Wave</span>
+          <span style="font-size: 11px; opacity: 0.8;">[B]</span>
         </button>
       </div>
     </div>
@@ -1168,27 +1307,119 @@
       }
     }
 
+    // 7. Explosive Wave (360-degree radial blast with pushback)
+    function triggerExplosiveWave() {
+      if (gameState.isGameOver) return;
+      if (gameState.player.ki < 25 && !gameState.player.isSparking) {
+        showToast("NEED 25 KI FOR EXPLOSIVE WAVE!");
+        return;
+      }
+      if (!gameState.player.isSparking) gameState.player.ki -= 25;
+      sound.playBeam();
+      showToast("💥 EXPLOSIVE WAVE!");
+
+      // 3D shockwave ring
+      const waveGeo = new THREE.RingGeometry(0.5, 3.0, 32);
+      const waveMat = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.95
+      });
+      const waveMesh = new THREE.Mesh(waveGeo, waveMat);
+      waveMesh.rotation.x = Math.PI / 2;
+      waveMesh.position.copy(gokuRig.group.position).add(new THREE.Vector3(0, 1.8, 0));
+      scene.add(waveMesh);
+
+      let waveRadius = 3.0;
+      const waveInterval = setInterval(() => {
+        waveRadius += 3.5;
+        waveMesh.scale.setScalar(waveRadius / 3.0);
+        waveMat.opacity -= 0.12;
+        if (waveMat.opacity <= 0) {
+          clearInterval(waveInterval);
+          scene.remove(waveMesh);
+        }
+      }, 35);
+
+      const dist = gokuRig.group.position.distanceTo(vegetaRig.group.position);
+      if (dist < 18) {
+        const dmg = 30;
+        applyDamage(gameState.opponent, dmg, false);
+        registerHit(1, dmg);
+        // Hurl Vegeta away
+        const pushDir = new THREE.Vector3().subVectors(vegetaRig.group.position, gokuRig.group.position).normalize();
+        vegetaRig.group.position.addScaledVector(pushDir, 16);
+      }
+      updateBT3HUD();
+    }
+
+    // --- Dynamic Camera Modes (Chase, Close, Panoramic) ---
+    let cameraMode = 0; // 0 = Chase, 1 = Close, 2 = Panoramic
+    const camModeNames = ['CHASE', 'CLOSE', 'WIDE'];
+
+    function cycleCameraMode() {
+      cameraMode = (cameraMode + 1) % 3;
+      const btn = document.getElementById('camToggle');
+      if (btn) btn.textContent = `🎥 CAM: ${camModeNames[cameraMode]} [C]`;
+      showToast(`CAMERA: ${camModeNames[cameraMode]}`);
+    }
+
+    // --- Cinematic HUD Visibility Toggle ---
+    let hudVisible = true;
+
+    function toggleHUD() {
+      hudVisible = !hudVisible;
+      const overlay = document.getElementById('hudOverlay');
+      const btn = document.getElementById('hudToggle');
+      if (hudVisible) {
+        overlay.classList.remove('hud-hidden');
+        if (btn) btn.textContent = '👁️ HUD: ON [H]';
+        showToast("HUD ENABLED");
+      } else {
+        overlay.classList.add('hud-hidden');
+        if (btn) btn.textContent = '👁️ HUD: OFF [H]';
+        showToast("CINEMATIC VIEW [H]");
+      }
+    }
+
+    // --- Interactive Keypress Glow Feedback ---
+    function setKeyBadgeState(key, isActive) {
+      const badges = document.querySelectorAll(`.badge-key[data-key="${key}"]`);
+      badges.forEach(b => {
+        if (isActive) b.classList.add('key-active');
+        else b.classList.remove('key-active');
+      });
+    }
+
     // --- Keyboard Bindings ---
     const keys = { w: false, a: false, s: false, d: false, space: false, shift: false };
 
     window.addEventListener('keydown', (e) => {
       const key = e.key.toLowerCase();
+      setKeyBadgeState(key, true);
+
       if (key in keys) keys[key] = true;
-      if (key === ' ') keys.space = true;
-      if (key === 'shift') { keys.shift = true; startDragonDash(); }
+      if (key === ' ') { keys.space = true; setKeyBadgeState('space', true); }
+      if (key === 'shift') { keys.shift = true; setKeyBadgeState('shift', true); startDragonDash(); }
 
       if (key === 'j') triggerRushCombo();
       if (key === 'v') triggerZVanish();
       if (key === 'k') triggerKiBlast();
       if (key === 'q') triggerKamehameha();
       if (key === 'e') startCharging();
+      if (key === 'b') triggerExplosiveWave();
+      if (key === 'c') cycleCameraMode();
+      if (key === 'h') toggleHUD();
     });
 
     window.addEventListener('keyup', (e) => {
       const key = e.key.toLowerCase();
+      setKeyBadgeState(key, false);
+
       if (key in keys) keys[key] = false;
-      if (key === ' ') keys.space = false;
-      if (key === 'shift') { keys.shift = false; stopDragonDash(); }
+      if (key === ' ') { keys.space = false; setKeyBadgeState('space', false); }
+      if (key === 'shift') { keys.shift = false; setKeyBadgeState('shift', false); stopDragonDash(); }
       if (key === 'e') stopCharging();
     });
 
@@ -1285,12 +1516,15 @@
       }
 
       // 4. Sparking! Mode Detection
+      const vignette = document.getElementById('sparkingVignette');
       if (gameState.player.isSparking) {
         document.getElementById('gokuKiDock').classList.add('sparking-active');
         document.getElementById('gokuSparkingBanner').classList.add('active');
+        if (vignette) vignette.classList.add('active');
       } else {
         document.getElementById('gokuKiDock').classList.remove('sparking-active');
         document.getElementById('gokuSparkingBanner').classList.remove('active');
+        if (vignette) vignette.classList.remove('active');
       }
     }
 
@@ -1325,6 +1559,101 @@
       document.getElementById('outcomeModal').classList.remove('active');
       updateBT3HUD();
       showToast("ROUND 1 · FIGHT!");
+    }
+
+    // --- Authentic Scouter Radar 2D Rendering ---
+    const radarCanvas = document.getElementById('scouterRadar');
+    const radarCtx = radarCanvas ? radarCanvas.getContext('2d') : null;
+    let radarSweepAngle = 0;
+
+    function drawScouterRadar() {
+      if (!radarCtx) return;
+      const w = radarCanvas.width;
+      const h = radarCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = cx - 6;
+
+      radarCtx.clearRect(0, 0, w, h);
+
+      // Radar Concentric Circles
+      radarCtx.strokeStyle = 'rgba(0, 255, 170, 0.28)';
+      radarCtx.lineWidth = 1;
+      radarCtx.beginPath();
+      radarCtx.arc(cx, cy, r * 0.35, 0, Math.PI * 2);
+      radarCtx.arc(cx, cy, r * 0.7, 0, Math.PI * 2);
+      radarCtx.arc(cx, cy, r, 0, Math.PI * 2);
+      radarCtx.stroke();
+
+      // Crosshairs
+      radarCtx.strokeStyle = 'rgba(0, 255, 170, 0.2)';
+      radarCtx.beginPath();
+      radarCtx.moveTo(cx, 4); radarCtx.lineTo(cx, h - 4);
+      radarCtx.moveTo(4, cy); radarCtx.lineTo(w - 4, cy);
+      radarCtx.stroke();
+
+      // Rotating Sweep Line
+      radarSweepAngle += 0.045;
+      const sx = cx + Math.cos(radarSweepAngle) * r;
+      const sy = cy + Math.sin(radarSweepAngle) * r;
+      radarCtx.strokeStyle = 'rgba(0, 255, 170, 0.65)';
+      radarCtx.lineWidth = 1.5;
+      radarCtx.beginPath();
+      radarCtx.moveTo(cx, cy);
+      radarCtx.lineTo(sx, sy);
+      radarCtx.stroke();
+
+      // World scale mapping: 75 world units = r pixels
+      const scale = r / 75;
+
+      // Goku position (cyan blip)
+      const gPos = gokuRig.group.position;
+      const gx = cx + gPos.x * scale;
+      const gy = cy + gPos.z * scale;
+      radarCtx.fillStyle = '#00ffff';
+      radarCtx.shadowColor = '#00ffff';
+      radarCtx.shadowBlur = 8;
+      radarCtx.beginPath();
+      radarCtx.arc(gx, gy, 3.5, 0, Math.PI * 2);
+      radarCtx.fill();
+
+      // Vegeta position (red blip with elevation indicator)
+      const vPos = vegetaRig.group.position;
+      const vx = cx + vPos.x * scale;
+      const vy = cy + vPos.z * scale;
+      radarCtx.fillStyle = '#ff2255';
+      radarCtx.shadowColor = '#ff2255';
+      radarCtx.shadowBlur = 8;
+
+      const elevDiff = vPos.y - gPos.y;
+      if (elevDiff > 2.0) {
+        // Higher elevation: Upward triangle
+        radarCtx.beginPath();
+        radarCtx.moveTo(vx, vy - 5);
+        radarCtx.lineTo(vx - 4, vy + 3);
+        radarCtx.lineTo(vx + 4, vy + 3);
+        radarCtx.closePath();
+        radarCtx.fill();
+      } else if (elevDiff < -2.0) {
+        // Lower elevation: Downward triangle
+        radarCtx.beginPath();
+        radarCtx.moveTo(vx, vy + 5);
+        radarCtx.lineTo(vx - 4, vy - 3);
+        radarCtx.lineTo(vx + 4, vy - 3);
+        radarCtx.closePath();
+        radarCtx.fill();
+      } else {
+        // Same elevation: Circle
+        radarCtx.beginPath();
+        radarCtx.arc(vx, vy, 4, 0, Math.PI * 2);
+        radarCtx.fill();
+      }
+      radarCtx.shadowBlur = 0;
+
+      // Update numeric distance tag
+      const dist = gPos.distanceTo(vPos);
+      const distTag = document.getElementById('radarDistTag');
+      if (distTag) distTag.textContent = `RADAR: ${dist.toFixed(1)}m`;
     }
 
     // --- Main 60FPS Game Loop ---
@@ -1454,15 +1783,29 @@
         }
       }
 
+      // Draw Authentic Scouter Radar
+      drawScouterRadar();
+
       // Update BT3 Lock-on Distance in Meters
       const dist = gokuRig.group.position.distanceTo(vegetaRig.group.position);
       document.getElementById('distMeter').textContent = `TARGET: ${dist.toFixed(1)} m`;
 
-      // Behind-the-shoulder BT3 Camera
+      // Multi-perspective BT3 Camera
       const gokuPos = gokuRig.group.position;
       const vegPos = vegetaRig.group.position;
       const camDir = new THREE.Vector3().subVectors(gokuPos, vegPos).normalize();
-      const idealCamPos = gokuPos.clone().addScaledVector(camDir, 11).add(new THREE.Vector3(0, 4.4, 0));
+
+      let camDist = 11;
+      let camElev = 4.4;
+      if (cameraMode === 1) { // Close Action
+        camDist = 6.4;
+        camElev = 2.4;
+      } else if (cameraMode === 2) { // Wide Panoramic
+        camDist = 24.0;
+        camElev = 9.5;
+      }
+
+      const idealCamPos = gokuPos.clone().addScaledVector(camDir, camDist).add(new THREE.Vector3(0, camElev, 0));
       camera.position.lerp(idealCamPos, 0.14);
       camera.lookAt(vegPos.x, vegPos.y + 1.8, vegPos.z);
 
